@@ -1,21 +1,3 @@
-// 放在 script.js 的第 1 行
-console.log("🚀 脚本开始运行");
-
-window.onload = function() {
-    console.log("✅ 页面完全加载完毕");
-    const btn = document.getElementById('get-started');
-    if (btn) {
-        console.log("🎯 找到按钮了！正在绑定点击事件...");
-        btn.onclick = function() {
-            console.log("🖱️ 按钮被点击了！");
-            // 强制切换页面逻辑
-            document.getElementById('home-section').classList.add('hidden-section');
-            document.getElementById('data-section').classList.remove('hidden-section');
-        };
-    } else {
-        console.error("❌ 没找到 ID 为 'get-started' 的按钮，请检查 HTML");
-    }
-};
 // --- 定义全局变量，预加载库和数据 ---
 let csvData;
 const customColors = ["#ebacb1", "#ced5e5", "#819dc5", "#ebb9c0", "#f8d5ba"]; // 珊瑚、灰蓝、紫灰等生物配色
