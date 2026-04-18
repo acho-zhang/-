@@ -2,52 +2,112 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>社交心理可视化</title>
-    <link rel="stylesheet" href="style.css">
-    
-    <script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/d3/7.3.0/d3.min.js"></script>
-    
-    <script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+    <title>社交心理：回复延迟的隐形权力</title>
+    <style>
+        /* 核心样式：确保背景和布局稳定 */
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #0a110f; color: white; font-family: sans-serif; overflow: hidden; }
+        #canvas-bg { position: fixed; top: 0; left: 0; z-index: -1; }
+        
+        .container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; transition: opacity 0.8s; }
+        .hidden { display: none !important; opacity: 0; }
+
+        h1 { font-size: 3rem; margin-bottom: 20px; color: #00ffcc; text-shadow: 0 0 20px rgba(0,255,204,0.5); }
+        p { max-width: 600px; line-height: 1.6; color: #a0ccc0; margin-bottom: 40px; }
+        
+        button { 
+            padding: 15px 40px; font-size: 1.1rem; background: transparent; 
+            border: 2px solid #00ffcc; color: #00ffcc; cursor: pointer;
+            transition: all 0.3s; border-radius: 4px;
+        }
+        button:hover { background: rgba(0,255,204,0.1); box-shadow: 0 0 20px rgba(0,255,204,0.3); }
+
+        .chart-page { padding: 40px; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; overflow-y: auto; height: 100vh; }
+        .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(0,255,204,0.2); padding: 20px; border-radius: 8px; width: 300px; height: 200px; }
+    </style>
 </head>
 <body>
-    <div id="particle-container"></div>
 
-    <header>
-        <div class="logo">Ψ</div>
-        <nav>
-            <span class="nav-item active" data-target="home">项目介绍</span>
-            <span class="nav-item" data-target="chart-total">活跃度总览</span>
-            <span class="nav-item" data-target="chart-ratio">权力地图</span>
-            <span class="nav-item" data-target="chart-speed">响应心跳</span>
-        </nav>
-    </header>
+    <canvas id="canvas-bg"></canvas>
 
-    <section id="home-section" class="active-section">
-        <div class="hero-content">
-            <h1 class="glow-text">社交心理：<br>“消息回复的隐形压力”</h1>
-            <p class="description">数据加载状态检查中...</p>
-            <div class="call-to-action">
-                <button id="get-started" class="primary-btn">开始探索</button>
-            </div>
-        </div>
-    </section>
+    <div id="home" class="container">
+        <h1>社交心理：<br>“消息回复的隐形压力”</h1>
+        <p>本可视化项目通过分析个人微信聊天记录，量化人际关系中的“权力结构”。我们将“响应延迟”视作心理博弈的量化指标，为您绘制一张数字时代的隐形重力地图。</p>
+        <button id="btn-start">开始探索</button>
+    </div>
 
-    <section id="data-section" class="hidden-section">
-        <div class="chart-container" id="chart-total">
-            <h2>📊 消息总量与社交能量分配</h2>
-            <div class="d3-wrapper" id="total-wrapper"></div>
-        </div>
-        <div class="chart-container hidden-section" id="chart-ratio">
-            <h2>⚖️ 字数比与权力天平</h2>
-            <div class="d3-wrapper" id="ratio-wrapper"></div>
-        </div>
-        <div class="chart-container hidden-section" id="chart-speed">
-            <h2>💓 响应时间与情感心跳</h2>
-            <div class="d3-wrapper" id="speed-wrapper"></div>
-        </div>
-    </section>
+    <div id="data-page" class="chart-page hidden">
+        <div class="card"><h3>📊 消息总量</h3><p>数据加载中...</p></div>
+        <div class="card"><h3>⚖️ 权力天平</h3><p>数据分析中...</p></div>
+        <div class="card"><h3>💓 响应心跳</h3><p>频率监测中...</p></div>
+        <button id="btn-back" style="width: 100%; max-width: 200px;">返回首页</button>
+    </div>
 
-    <script src="script.js"></script>
+    <script>
+        // --- 核心逻辑：确保在 DOM 加载后运行 ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const home = document.getElementById('home');
+            const dataPage = document.getElementById('data-page');
+            const btnStart = document.getElementById('btn-start');
+            const btnBack = document.getElementById('btn-back');
+
+            // 1. 简单的背景粒子系统（不依赖外部库）
+            const canvas = document.getElementById('canvas-bg');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2;
+                    this.speedX = Math.random() * 0.5 - 0.25;
+                    this.speedY = Math.random() * 0.5 - 0.25;
+                    this.opacity = Math.random();
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x > canvas.width) this.x = 0;
+                    if (this.x < 0) this.x = canvas.width;
+                    if (this.y > canvas.height) this.y = 0;
+                    if (this.y < 0) this.y = canvas.height;
+                }
+                draw() {
+                    ctx.fillStyle = `rgba(0, 255, 204, ${this.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            for (let i = 0; i < 100; i++) particles.push(new Particle());
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => { p.update(); p.draw(); });
+                requestAnimationFrame(animate);
+            }
+            animate();
+
+            // 2. 交互逻辑：点击切换
+            btnStart.onclick = () => {
+                console.log("探索开始");
+                home.classList.add('hidden');
+                dataPage.classList.remove('hidden');
+            };
+
+            btnBack.onclick = () => {
+                dataPage.classList.add('hidden');
+                home.classList.remove('hidden');
+            };
+        });
+    </script>
 </body>
 </html>
