@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社交心理：回复延迟的隐形权力</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/00/animejs/3.2.1/anime.min.js"></script>
+</head>
+<body>
+
+    <div id="particle-container"></div>
+
+    <header>
+        <div class="logo">Ψ</div> <nav>
+            <span class="nav-item active" data-target="home">项目介绍</span>
+            <span class="nav-item" data-target="chart-total">活跃度总览</span>
+            <span class="nav-item" data-target="chart-ratio">权力地图</span>
+            <span class="nav-item" data-target="chart-speed">响应心跳</span>
+        </nav>
+    </header>
+
+    <section id="home-section" class="active-section">
+        <div class="hero-content">
+            <h1 class="glow-text">社交心理：<br>“消息回复的隐形压力”</h1>
+            <p class="description">本可视化项目通过分析个人微信聊天记录（已脱敏），量化人际关系中的“权力结构”。我们将“响应延迟”与“文本密度”视作心理博弈的量化指标，为您绘制一张数字时代的隐形重力地图。</p>
+            <div class="call-to-action">
+                <button id="get-started" class="primary-btn">开始探索</button>
+            </div>
+        </div>
+        <div class="glow-cluster-wrapper">
+            <div class="glow-cluster"></div>
+        </div>
+    </section>
+
+    <section id="data-section" class="hidden-section">
+        <div class="chart-container" id="chart-total">
+            <h2>📊 消息总量与社交能量分配</h2>
+            <div class="d3-wrapper" id="total-wrapper"></div>
+        </div>
+        <div class="chart-container hidden-section" id="chart-ratio">
+            <h2>⚖️ 字数比与权力天平</h2>
+            <div class="d3-wrapper" id="ratio-wrapper"></div>
+        </div>
+        <div class="chart-container hidden-section" id="chart-speed">
+            <h2>💓 响应时间与情感心跳</h2>
+            <div class="d3-wrapper" id="speed-wrapper"></div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
