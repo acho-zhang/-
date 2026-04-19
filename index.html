@@ -94,7 +94,7 @@
         }
 
         .start-btn {
-            background: #b6a2c6;
+            background: #d6c1b5;
             border: none;
             padding: 0.85rem 2rem;
             font-size: 1rem;
@@ -110,7 +110,7 @@
         }
 
         .start-btn:hover {
-            background: #9f89b3;
+            background: #e5d6cd;
             transform: translateY(-3px);
         }
 
@@ -160,7 +160,7 @@
         .insight-card:hover {
             transform: translateY(-6px);
             background: #fffaf3;
-            border-color: #cfbcdb;
+            border-color: #d6c1b5;
             box-shadow: 0 15px 25px -10px rgba(100, 80, 110, 0.15);
         }
 
@@ -188,7 +188,7 @@
             padding: 0.25rem 1rem;
             border-radius: 40px;
             font-size: 0.7rem;
-            color: #9a7faa;
+            color: #b6a499;
         }
 
         .chart-detail-page {
@@ -294,8 +294,8 @@
             <div class="insight-card" data-chart="chart3">
                 <div class="card-icon">🏁</div>
                 <div class="card-title">心理阻力·赛道往返</div>
-                <div class="card-desc">五条横向赛道，小球匀速往返运动。<br>速度 = 回复速度(延迟倒数)，体积 = 情感质量</div>
-                <div class="card-tag">点击查看动态赛道 →</div>
+                <div class="card-desc">谁的消息你会秒回，谁的消息又常常石沉大海？<br>速度 = 回复速度，体积 = 对话数量</div>
+                <div class="card-tag">点击查看 →</div>
             </div>
         </div>
     </div>
@@ -434,7 +434,7 @@
                 yAxis: { type: 'value', name: '总字数 (字符)', nameTextStyle: { color: '#9a88a3' } },
                 series: [{
                     type: 'bar', data: relationData.map(d => d.totalWords),
-                    itemStyle: { borderRadius: [10,10,0,0], color: '#b9a2cd', label: { show: true, position: 'top', fontWeight: 'bold', color: '#7a6392' } }
+                    itemStyle: { borderRadius: [10,10,0,0], color: '#c7c1cb', label: { show: true, position: 'top', fontWeight: 'bold', color: '#7a6392' } }
                 }]
             });
             return chart;
@@ -456,10 +456,10 @@
                 grid: { left: '12%', right: '8%', top: '12%', bottom: '8%', containLabel: true },
                 xAxis: { type: 'value', name: '字数占比 (%)', max: 100, axisLabel: { formatter: '{value}%' } },
                 yAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontWeight: 500, color: '#7a6a85' } },
-                legend: { data: ['我 (主动倾注)', '对方 (回应/主导)'], left: 'left', textStyle: { color: '#9b89a3' } },
+                legend: { data: ['我 ', '对方 '], left: 'left', textStyle: { color: '#9b89a3' } },
                 series: [
-                    { name: '我 (主动倾注)', type: 'bar', stack: 'total', data: myPercent, itemStyle: { color: '#a7b9cd', borderRadius: [0, 6, 6, 0], label: { show: true, position: 'right', formatter: p => p.value.toFixed(1)+'%' } } },
-                    { name: '对方 (回应/主导)', type: 'bar', stack: 'total', data: theirPercent, itemStyle: { color: '#dcb5c5', borderRadius: [6, 0, 0, 6], label: { show: true, position: 'left', formatter: p => p.value.toFixed(1)+'%' } } }
+                    { name: '我 ', type: 'bar', stack: 'total', data: myPercent, itemStyle: { color: '#dcb5c5', borderRadius: [0, 6, 6, 0], label: { show: true, position: 'right', formatter: p => p.value.toFixed(1)+'%' } } },
+                    { name: '对方 ', type: 'bar', stack: 'total', data: theirPercent, itemStyle: { color: '#a7b9cd', borderRadius: [6, 0, 0, 6], label: { show: true, position: 'left', formatter: p => p.value.toFixed(1)+'%' } } }
                 ]
             });
             return chart;
@@ -496,7 +496,7 @@
             buildTracks() {
                 // 按原始顺序显示（恋人、朋友、母女、师生、兄妹），也可按延迟排序，但清晰排开即可
                 const order = [...this.data];
-                const palette = ['#8eb3c7', '#c4a5cf', '#e1b7c7', '#b7c9e2', '#d9b8d4'];
+                const palette = ['#c49c99', '#d1b7b8', '#c7c1cb', '#dbcbc2', '#e8ddd8'];
                 
                 this.tracks = order.map((item, idx) => {
                     const radius = getRadius(item.totalWords);
@@ -651,7 +651,7 @@
                 <div class="chart-container">
                     <div class="chart-header">
                         <div class="chart-title">${chartType === 'chart1' ? '📊 消息总量对比' : chartType === 'chart2' ? '⚖️ 对话天平' : '🏁 心理阻力 · 赛道往返'}</div>
-                        <div class="chart-sub">${chartType === 'chart1' ? '横向权力对比，社交能量分布' : chartType === 'chart2' ? '横向占比：我 vs 对方' : '小球速度 = 回复速度(延迟倒数)，体积 = 情感质量'}</div>
+                        <div class="chart-sub">${chartType === 'chart1' ? '横向权力对比，社交能量分布' : chartType === 'chart2' ? '横向占比：我 vs 对方' : '小球速度 = 回复速度，体积 = 对话数量'}</div>
                     </div>
                     <div id="dynamicChart" class="chart-box"></div>
                 </div>
