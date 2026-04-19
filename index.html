@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>社交心理 · 消息回复的隐形压力 | 莫兰迪赛道·往返微粒</title>
-    <!-- ECharts CDN (用于图表1和2) -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
-    <!-- 字体与图标 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -18,14 +16,13 @@
         }
 
         body {
-            background: #f2ede8;  /* 莫兰迪暖灰基底 */
+            background: #efeae4;
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             color: #3e3a35;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* 柔和粒子背景 (莫兰迪氛围) */
         #particles-canvas {
             position: fixed;
             top: 0;
@@ -34,7 +31,7 @@
             height: 100%;
             pointer-events: none;
             z-index: 0;
-            opacity: 0.4;
+            opacity: 0.35;
         }
 
         .page {
@@ -45,17 +42,14 @@
             z-index: 2;
         }
 
-        /* 通用玻璃卡片 */
         .glass-card {
-            background: rgba(253, 250, 245, 0.86);
+            background: rgba(253, 250, 245, 0.88);
             backdrop-filter: blur(4px);
             border-radius: 2rem;
             box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.08);
             border: 1px solid rgba(210, 190, 170, 0.4);
-            transition: all 0.25s;
         }
 
-        /* 首页 */
         .home-page {
             display: flex;
             flex-direction: column;
@@ -120,7 +114,6 @@
             transform: translateY(-3px);
         }
 
-        /* 探索卡片页 */
         .explore-page {
             display: none;
         }
@@ -198,7 +191,6 @@
             color: #9a7faa;
         }
 
-        /* 图表详情页 */
         .chart-detail-page {
             display: none;
         }
@@ -235,10 +227,9 @@
 
         .chart-box {
             width: 100%;
-            height: 460px;
+            height: 480px;
         }
 
-        /* 赛道画布 */
         .track-canvas {
             width: 100%;
             height: 520px;
@@ -257,15 +248,14 @@
         @media (max-width: 700px) {
             .hero-title { font-size: 1.9rem; }
             .cards-grid { grid-template-columns: 1fr; }
-            .chart-box { height: 360px; }
-            .track-canvas { height: 460px; }
+            .chart-box { height: 380px; }
+            .track-canvas { height: 560px; }
         }
     </style>
 </head>
 <body>
 <canvas id="particles-canvas"></canvas>
 <div class="page">
-    <!-- 首页 -->
     <div id="homePage" class="home-page">
         <div class="hero-card glass-card">
             <div class="hero-title">
@@ -284,7 +274,6 @@
         </div>
     </div>
 
-    <!-- 卡片选择页 -->
     <div id="explorePage" class="explore-page">
         <div class="explore-header">
             <button class="back-btn" id="backToHomeBtn"><i class="fas fa-arrow-left"></i> 返回首页</button>
@@ -305,13 +294,12 @@
             <div class="insight-card" data-chart="chart3">
                 <div class="card-icon">🏁</div>
                 <div class="card-title">心理阻力·赛道往返</div>
-                <div class="card-desc">五条横向赛道，小球匀速往返运动。<br>速度 = 回复速度(延迟倒数)，球体大小 = 情感质量</div>
+                <div class="card-desc">五条横向赛道，小球匀速往返运动。<br>速度 = 回复速度(延迟倒数)，体积 = 情感质量</div>
                 <div class="card-tag">点击查看动态赛道 →</div>
             </div>
         </div>
     </div>
 
-    <!-- 图表详情页 -->
     <div id="detailPage" class="chart-detail-page">
         <div class="explore-header">
             <button class="back-btn" id="backToCardsBtn"><i class="fas fa-arrow-left"></i> 返回卡片</button>
@@ -322,7 +310,7 @@
 
 <script>
     (function() {
-        // ---------- 莫兰迪粒子背景 (粉蓝紫氛围) ----------
+        // 粒子背景
         const canvas = document.getElementById('particles-canvas');
         let ctx = canvas.getContext('2d');
         let width = window.innerWidth, height = window.innerHeight;
@@ -335,7 +323,6 @@
                     x: Math.random() * width,
                     y: Math.random() * height,
                     radius: Math.random() * 3 + 1.5,
-                    alpha: Math.random() * 0.35 + 0.1,
                     speedX: (Math.random() - 0.5) * 0.2,
                     speedY: (Math.random() - 0.5) * 0.15,
                     color: colors[Math.floor(Math.random() * colors.length)]
@@ -380,7 +367,7 @@
         }
         setupParticles();
 
-        // ---------- 核心数据 ----------
+        // 数据
         const relationData = [
             { name: "恋人", totalWords: 8475, myWords: 3759, theirWords: 4716, myRatio: 0.4435, avgDelaySec: 776.35 },
             { name: "朋友", totalWords: 846, myWords: 147, theirWords: 699, myRatio: 0.1738, avgDelaySec: 12585 },
@@ -389,36 +376,31 @@
             { name: "兄妹", totalWords: 147, myWords: 99, theirWords: 48, myRatio: 0.6735, avgDelaySec: 3600 }
         ];
 
-        // 球体半径映射 (差异缩小，符合要求：差距小一点)
+        // 球体半径映射 (差距小一点)
         const minWords = Math.min(...relationData.map(d => d.totalWords));
         const maxWords = Math.max(...relationData.map(d => d.totalWords));
         function getRadius(words) {
-            const minR = 14, maxR = 36;   // 体积差距柔和
-            if (maxWords === minWords) return 24;
+            const minR = 16, maxR = 34;
+            if (maxWords === minWords) return 25;
             return minR + (words - minWords) / (maxWords - minWords) * (maxR - minR);
         }
 
-        // 速度映射：回复速度 = 1 / 延迟 (归一化后映射到像素/帧速率)
-        // 为了让视觉差异明显但不过分，使用 maxDelay 做倒数后映射速度范围 0.9 ~ 3.2 像素/帧 (60fps下流畅)
+        // 速度映射：延迟越大速度越慢
         const delays = relationData.map(d => d.avgDelaySec);
         const maxDelay = Math.max(...delays);
         const minDelay = Math.min(...delays);
         function getSpeedPxPerFrame(delaySec) {
-            // 回复速度与延迟成反比，延迟越大速度越慢
-            let speedVal = 1.0 / (delaySec / 100 + 0.02);
-            // 归一化映射到 0.7 ~ 3.0 区间，使差异明显但不过于极端
-            const maxRaw = 1.0 / (minDelay / 100 + 0.02);
-            const minRaw = 1.0 / (maxDelay / 100 + 0.02);
+            let speedVal = 1.0 / (delaySec / 80 + 0.015);
+            const maxRaw = 1.0 / (minDelay / 80 + 0.015);
+            const minRaw = 1.0 / (maxDelay / 80 + 0.015);
             const norm = (speedVal - minRaw) / (maxRaw - minRaw);
-            const finalSpeed = 0.9 + norm * 2.4;
-            return Math.min(3.2, Math.max(0.85, finalSpeed));
+            let finalSpeed = 0.9 + norm * 2.6;
+            return Math.min(3.3, Math.max(0.9, finalSpeed));
         }
 
-        // 赛道往返动画管理器
         let trackAnimation = null;
         let currentChart = null;
-        
-        // 页面元素
+
         const homePage = document.getElementById('homePage');
         const explorePage = document.getElementById('explorePage');
         const detailPage = document.getElementById('detailPage');
@@ -440,7 +422,7 @@
             if (pageName === 'detail') detailPage.style.display = 'block';
         }
 
-        // 图表1: 消息总量柱状图
+        // 图表1
         function renderChart1(containerId) {
             const dom = document.getElementById(containerId);
             if (!dom) return null;
@@ -458,7 +440,7 @@
             return chart;
         }
 
-        // 图表2: 横向百分比堆叠 (莫兰迪粉紫)
+        // 图表2
         function renderChart2(containerId) {
             const dom = document.getElementById(containerId);
             if (!dom) return null;
@@ -483,8 +465,8 @@
             return chart;
         }
 
-        // ========== 核心: 五条横向赛道 + 匀速往返小球 ==========
-        class TrackPendulumRacer {
+        // ========== 赛道往返动画 - 五条独立赛道，依次排开 ==========
+        class TrackRacer {
             constructor(canvasId, data) {
                 this.canvas = document.getElementById(canvasId);
                 if (!this.canvas) return;
@@ -505,48 +487,18 @@
                 if (!container) return;
                 const rect = container.getBoundingClientRect();
                 this.canvas.width = rect.width;
-                this.canvas.height = 520;
+                this.canvas.height = 540;
                 this.width = this.canvas.width;
                 this.height = this.canvas.height;
-                this.updateTrackDimensions();
-                this.drawStatic();
-            }
-            updateTrackDimensions() {
-                if (!this.tracks.length) return;
-                const trackCount = this.tracks.length;
-                const topMargin = 65;
-                const bottomMargin = 55;
-                const availableHeight = this.height - topMargin - bottomMargin;
-                const trackHeight = Math.max(38, availableHeight / trackCount - 6);
-                let yStart = topMargin;
-                for (let i = 0; i < this.tracks.length; i++) {
-                    this.tracks[i].y = yStart;
-                    this.tracks[i].trackHeight = trackHeight;
-                    this.tracks[i].startX = 55;
-                    this.tracks[i].endX = this.width - 55;
-                    const range = this.tracks[i].endX - this.tracks[i].startX;
-                    this.tracks[i].range = range;
-                    // 确保小球位置在边界内
-                    if (this.tracks[i].posX === undefined) this.tracks[i].posX = this.tracks[i].startX + range * 0.3;
-                    else {
-                        // 重新映射位置比例
-                        let t = (this.tracks[i].posX - this.tracks[i].startXPrev) / (this.tracks[i].rangePrev || range);
-                        if (isNaN(t)) t = 0.3;
-                        this.tracks[i].posX = this.tracks[i].startX + t * range;
-                    }
-                    this.tracks[i].startXPrev = this.tracks[i].startX;
-                    this.tracks[i].rangePrev = range;
-                    // 方向重置避免出界
-                    if (this.tracks[i].posX < this.tracks[i].startX) this.tracks[i].posX = this.tracks[i].startX;
-                    if (this.tracks[i].posX > this.tracks[i].endX) this.tracks[i].posX = this.tracks[i].endX;
-                }
-                this.drawStatic();
+                this.updateTrackPositions();
+                this.draw();
             }
             buildTracks() {
-                // 使用延迟排序，使视觉上更有层次
-                const sorted = [...this.data].sort((a,b) => b.avgDelaySec - a.avgDelaySec);
-                const palette = ['#8eb3c7', '#c4a5cf', '#e1b7c7', '#b7c9e2', '#d9b8d4']; // 蓝粉紫莫兰迪
-                this.tracks = sorted.map((item, idx) => {
+                // 按原始顺序显示（恋人、朋友、母女、师生、兄妹），也可按延迟排序，但清晰排开即可
+                const order = [...this.data];
+                const palette = ['#8eb3c7', '#c4a5cf', '#e1b7c7', '#b7c9e2', '#d9b8d4'];
+                
+                this.tracks = order.map((item, idx) => {
                     const radius = getRadius(item.totalWords);
                     const speed = getSpeedPxPerFrame(item.avgDelaySec);
                     return {
@@ -554,55 +506,105 @@
                         delaySec: item.avgDelaySec,
                         totalWords: item.totalWords,
                         radius: radius,
-                        speed: speed,          // 像素/帧 (约60fps)
-                        direction: 1,          // 1向右 -1向左
+                        speed: speed,
+                        direction: 1,
                         posX: 0,
                         y: 0,
-                        startX: 55,
+                        startX: 70,
                         endX: 0,
-                        range: 0,
+                        trackHeight: 0,
                         color: palette[idx % palette.length],
                         labelColor: '#6d5c7c'
                     };
                 });
             }
-            drawStatic() {
+            updateTrackPositions() {
+                const trackCount = this.tracks.length;
+                const topMargin = 55;
+                const bottomMargin = 45;
+                const availableHeight = this.height - topMargin - bottomMargin;
+                const trackHeight = availableHeight / trackCount;
+                
+                for (let i = 0; i < this.tracks.length; i++) {
+                    const t = this.tracks[i];
+                    const centerY = topMargin + i * trackHeight + trackHeight / 2;
+                    t.y = centerY;
+                    t.trackHeight = trackHeight * 0.6;
+                    t.startX = 70;
+                    t.endX = this.width - 70;
+                    const range = t.endX - t.startX;
+                    t.range = range;
+                    
+                    if (t.posX === 0 || isNaN(t.posX)) {
+                        t.posX = t.startX + range * 0.3;
+                    }
+                    if (t.posX < t.startX) t.posX = t.startX;
+                    if (t.posX > t.endX) t.posX = t.endX;
+                }
+            }
+            draw() {
                 if (!this.ctx || !this.width) return;
-                // 背景底色
+                this.ctx.clearRect(0, 0, this.width, this.height);
                 this.ctx.fillStyle = '#fefaf5';
                 this.ctx.fillRect(0, 0, this.width, this.height);
-                // 绘制每条赛道
+                
                 for (let t of this.tracks) {
-                    const midY = t.y + t.trackHeight / 2;
-                    // 赛道线条
+                    const lineY = t.y;
+                    // 赛道虚线
                     this.ctx.beginPath();
-                    this.ctx.moveTo(t.startX, midY);
-                    this.ctx.lineTo(t.endX, midY);
+                    this.ctx.moveTo(t.startX, lineY);
+                    this.ctx.lineTo(t.endX, lineY);
                     this.ctx.strokeStyle = '#d9cdc0';
                     this.ctx.lineWidth = 2.5;
                     this.ctx.setLineDash([8, 12]);
                     this.ctx.stroke();
                     this.ctx.setLineDash([]);
-                    // 赛道两端装饰
+                    
+                    // 起点/终点装饰
                     this.ctx.beginPath();
-                    this.ctx.arc(t.startX, midY, 6, 0, 2 * Math.PI);
+                    this.ctx.arc(t.startX, lineY, 7, 0, 2 * Math.PI);
                     this.ctx.fillStyle = '#e7dbcf';
                     this.ctx.fill();
                     this.ctx.beginPath();
-                    this.ctx.arc(t.endX, midY, 6, 0, 2 * Math.PI);
+                    this.ctx.arc(t.endX, lineY, 7, 0, 2 * Math.PI);
                     this.ctx.fill();
                     
-                    // 标签文字
+                    // 关系名称标签
                     this.ctx.font = `600 14px "Inter"`;
                     this.ctx.fillStyle = t.labelColor;
-                    this.ctx.shadowBlur = 0;
-                    this.ctx.fillText(t.name, 12, midY + 5);
-                    // 右侧显示延迟数值
+                    this.ctx.fillText(t.name, 12, lineY + 5);
+                    
+                    // 右侧延迟信息
                     const delayText = t.delaySec > 3600 ? `${(t.delaySec/3600).toFixed(1)}h` : `${t.delaySec.toFixed(0)}s`;
                     this.ctx.font = `11px monospace`;
                     this.ctx.fillStyle = '#aa9bae';
-                    this.ctx.fillText(`回复延迟 ${delayText}`, this.width - 90, midY + 5);
+                    this.ctx.fillText(`回复延迟 ${delayText}`, this.width - 95, lineY + 5);
+                    
+                    // 小球
+                    const x = t.posX;
+                    const radius = t.radius;
+                    const grad = this.ctx.createRadialGradient(x-4, lineY-4, 3, x, lineY, radius);
+                    grad.addColorStop(0, t.color);
+                    grad.addColorStop(1, this.darkenColor(t.color));
+                    this.ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                    this.ctx.shadowBlur = 6;
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, lineY, radius, 0, 2 * Math.PI);
+                    this.ctx.fillStyle = grad;
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#fff6ed';
+                    this.ctx.lineWidth = 1.5;
+                    this.ctx.stroke();
+                    this.ctx.shadowBlur = 0;
+                    
+                    // 小球内显示字数
+                    this.ctx.font = `${Math.max(9, Math.min(12, radius/3.2))}px "Inter"`;
+                    this.ctx.fillStyle = '#fef7e8';
+                    this.ctx.fillText(`${t.totalWords}`, x-4, lineY+4);
                 }
+            }
+            darkenColor(color) {
+                return color;
             }
             updatePositions() {
                 for (let t of this.tracks) {
@@ -618,43 +620,13 @@
                     t.posX = Math.min(t.endX, Math.max(t.startX, newX));
                 }
             }
-            drawBalls() {
-                for (let t of this.tracks) {
-                    const midY = t.y + t.trackHeight / 2;
-                    const x = t.posX;
-                    const radius = t.radius;
-                    // 球体渐变
-                    const grad = this.ctx.createRadialGradient(x-4, midY-4, 3, x, midY, radius);
-                    grad.addColorStop(0, t.color);
-                    grad.addColorStop(1, this.darkenColor(t.color));
-                    this.ctx.shadowColor = 'rgba(0,0,0,0.1)';
-                    this.ctx.shadowBlur = 6;
-                    this.ctx.beginPath();
-                    this.ctx.arc(x, midY, radius, 0, 2 * Math.PI);
-                    this.ctx.fillStyle = grad;
-                    this.ctx.fill();
-                    this.ctx.strokeStyle = '#fff6ed';
-                    this.ctx.lineWidth = 1.5;
-                    this.ctx.stroke();
-                    this.ctx.shadowBlur = 0;
-                    // 小球内文字(字数/情感)
-                    this.ctx.font = `${Math.max(9, Math.min(12, radius/3.2))}px "Inter"`;
-                    this.ctx.fillStyle = '#fef7e8';
-                    this.ctx.fillText(`${t.totalWords}`, x-4, midY+4);
-                }
-            }
-            darkenColor(color) {
-                // 简单变暗用于渐变
-                return color;
-            }
-            animateFrame() {
+            animate() {
                 this.updatePositions();
-                this.drawStatic();
-                this.drawBalls();
+                this.draw();
             }
             startAnimation() {
                 const step = () => {
-                    this.animateFrame();
+                    this.animate();
                     this.animationId = requestAnimationFrame(step);
                 };
                 this.animationId = requestAnimationFrame(step);
@@ -670,8 +642,8 @@
         function renderChart3(containerId) {
             const container = document.getElementById(containerId);
             if (!container) return;
-            container.innerHTML = `<canvas id="trackCanvas" class="track-canvas" style="width:100%; height:520px; display:block;"></canvas>`;
-            trackAnimation = new TrackPendulumRacer('trackCanvas', relationData);
+            container.innerHTML = `<canvas id="trackCanvas" class="track-canvas" style="width:100%; height:540px; display:block;"></canvas>`;
+            trackAnimation = new TrackRacer('trackCanvas', relationData);
         }
 
         function renderDetailChart(chartType) {
@@ -693,12 +665,11 @@
             }, 80);
         }
 
-        // 绑定事件
         if (startBtn) startBtn.onclick = () => showPage('explore');
         if (backToHomeBtn) backToHomeBtn.onclick = () => showPage('home');
         if (backToCardsBtn) backToCardsBtn.onclick = () => showPage('explore');
         document.querySelectorAll('.insight-card').forEach(card => {
-            card.addEventListener('click', (e) => {
+            card.addEventListener('click', () => {
                 const type = card.getAttribute('data-chart');
                 renderDetailChart(type);
                 showPage('detail');
