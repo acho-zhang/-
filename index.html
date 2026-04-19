@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>社交心理 · 消息回复的隐形压力 | 数字时代的偏心图谱</title>
-    <!-- ECharts CDN -->
+    <title>社交心理 · 消息回复的隐形压力</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
-    <!-- Font Awesome 6 免费图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -16,250 +14,291 @@
         }
 
         body {
-            background: linear-gradient(145deg, #f4f7fc 0%, #eef2f5 100%);
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #f0f2f5 0%, #e8ecf1 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
             color: #1a2c3e;
+            min-height: 100vh;
+        }
+
+        /* 页面容器 */
+        .page {
+            max-width: 1300px;
+            margin: 0 auto;
             padding: 2rem 1.5rem;
         }
 
-        .dashboard {
-            max-width: 1300px;
+        /* 首页样式 */
+        .home-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, #ffffff 0%, #fef9ef 100%);
+            border-radius: 2.5rem;
+            padding: 3rem 2.5rem;
+            text-align: center;
+            box-shadow: 0 30px 45px -20px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.6);
+            max-width: 800px;
             margin: 0 auto;
         }
 
-        /* 卡片通用样式 */
-        .card {
-            background: rgba(255, 255, 255, 0.94);
-            backdrop-filter: blur(2px);
-            border-radius: 2rem;
-            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            overflow: hidden;
-        }
-
-        /* 首页介绍区域 - 鼠标点击进入叙事 */
-        .intro-section {
-            margin-bottom: 2.8rem;
-            cursor: pointer;
-            transition: transform 0.25s, box-shadow 0.3s;
-        }
-        .intro-section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 28px 38px -14px rgba(0, 0, 0, 0.2);
-        }
-        .intro-content {
-            padding: 2rem 2.2rem;
-            background: linear-gradient(120deg, #ffffff 0%, #fef7ec 100%);
-            border-left: 8px solid #e67e22;
-        }
-        .intro-title {
-            font-size: 2.2rem;
+        .hero-title {
+            font-size: 2.8rem;
             font-weight: 800;
             background: linear-gradient(135deg, #d35400, #f39c12);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            letter-spacing: -0.3px;
-            margin-bottom: 0.6rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .intro-title i {
-            background: none;
-            color: #e67e22;
-            font-size: 2rem;
-        }
-        .intro-sub {
-            font-size: 1.1rem;
-            color: #4a5b6e;
-            border-left: 3px solid #f7b05e;
-            padding-left: 1rem;
-            margin: 0.8rem 0 1rem 0;
-            font-weight: 500;
-        }
-        .intro-text {
-            font-size: 1rem;
-            line-height: 1.5;
-            color: #2c3e4e;
-            margin-top: 0.5rem;
-        }
-        .insight-badge {
-            display: inline-block;
-            background: #f4e5d8;
-            border-radius: 40px;
-            padding: 0.3rem 1.2rem;
-            font-size: 0.8rem;
-            color: #b45f2b;
-            margin-top: 1rem;
-            font-weight: 600;
-        }
-        .click-hint {
-            text-align: right;
-            font-size: 0.8rem;
-            color: #8ca3b9;
-            margin-top: 0.8rem;
-        }
-        .click-hint i {
-            font-size: 0.7rem;
+            margin-bottom: 1rem;
         }
 
-        /* 图表网格 */
-        .charts-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 2.5rem;
-            margin-top: 0.5rem;
+        .hero-sub {
+            font-size: 1.2rem;
+            color: #5a6e7c;
+            border-left: 4px solid #f39c12;
+            padding-left: 1rem;
+            margin: 1rem auto;
+            display: inline-block;
         }
-        .chart-item {
-            opacity: 0;
-            transform: translateY(28px);
-            transition: opacity 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.2), transform 0.6s ease;
-            pointer-events: none;
+
+        .hero-text {
+            color: #4a627a;
+            line-height: 1.6;
+            margin: 1.5rem 0;
+            font-size: 1rem;
         }
-        .chart-item.visible {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
+
+        .start-btn {
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(230,126,34,0.3);
         }
-        .chart-card {
-            padding: 1.2rem 1rem 1rem 1rem;
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(230,126,34,0.4);
         }
+
+        /* 探索页面（卡片选择页） */
+        .explore-page {
+            display: none;
+        }
+
+        .explore-header {
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #e67e22;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .back-btn:hover {
+            background: #e67e22;
+            color: white;
+            transform: translateX(-3px);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .insight-card {
+            background: white;
+            border-radius: 1.8rem;
+            padding: 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px -10px rgba(0,0,0,0.1);
+            border: 1px solid #f0e6d8;
+            text-align: center;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 35px -12px rgba(230,126,34,0.2);
+            border-color: #f39c12;
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.8rem;
+        }
+
+        .card-desc {
+            color: #6c86a0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .card-tag {
+            display: inline-block;
+            background: #fdf2e6;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            color: #e67e22;
+        }
+
+        /* 图表详情页 */
+        .chart-detail-page {
+            display: none;
+        }
+
+        .chart-container-box {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 10px 30px -12px rgba(0,0,0,0.1);
+        }
+
         .chart-header {
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
-            flex-wrap: wrap;
-            padding: 0 0.8rem 0.8rem 0.8rem;
-            border-bottom: 2px solid #e9edf2;
-            margin-bottom: 1rem;
-        }
-        .chart-title {
-            font-weight: 700;
-            font-size: 1.4rem;
-            color: #2c3e50;
-            display: flex;
             align-items: center;
-            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid #f0e6d8;
         }
+
+        .chart-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
         .chart-sub {
-            font-size: 0.8rem;
-            background: #eef3fa;
-            padding: 0.2rem 0.8rem;
-            border-radius: 30px;
-            color: #4a6a85;
+            color: #e67e22;
+            font-size: 0.85rem;
         }
-        .chart-container {
+
+        .chart-box {
             width: 100%;
-            height: 380px;
+            height: 450px;
         }
-        .bubble-chart {
-            height: 460px;
+
+        /* 摆球画布专用 */
+        .pendulum-canvas {
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(180deg, #fefcf7 0%, #f7f3ea 100%);
+            border-radius: 1.5rem;
         }
+
         .footer-note {
             text-align: center;
-            margin-top: 2.2rem;
+            margin-top: 2rem;
             font-size: 0.75rem;
-            color: #7e95ab;
-            border-top: 1px solid #dce5ec;
-            padding-top: 1.2rem;
+            color: #8ba3bc;
         }
+
         @media (max-width: 700px) {
-            body { padding: 1rem; }
-            .intro-title { font-size: 1.6rem; }
-            .chart-container { height: 300px; }
-            .bubble-chart { height: 380px; }
-        }
-        .highlight {
-            color: #e67e22;
-            font-weight: 600;
-        }
-        
-        /* 加载提示样式 */
-        .loading-tip {
-            text-align: center;
-            padding: 40px;
-            color: #7e95ab;
-            font-size: 0.9rem;
+            .hero-title { font-size: 2rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .chart-box { height: 350px; }
         }
     </style>
 </head>
 <body>
-<div class="dashboard">
-    <!-- 首页介绍区 (点击任意位置开始展示图表) -->
-    <div class="card intro-section" id="introCard">
-        <div class="intro-content">
-            <div class="intro-title">
-                <i class="fas fa-comment-slash"></i> 
-                消息回复的隐形压力
+<div class="page" id="app">
+    <!-- 首页 -->
+    <div id="homePage" class="home-page">
+        <div class="hero-card">
+            <div class="hero-title">
+                <i class="fas fa-comment-slash"></i> 消息回复的隐形压力
             </div>
-            <div class="intro-sub">
-                「数字时代的偏心」—— 有些人的消息是即时弹窗，有些人的消息是深海沉船。
+            <div class="hero-sub">
+                「数字时代的偏心」—— 即时弹窗 vs 深海沉船
             </div>
-            <div class="intro-text">
-                <i class="fas fa-chart-line" style="margin-right: 8px; color:#f39c12;"></i>
-                基于真实微信聊天记录 · 揭示人际关系的"权力地图"。<br>
-                分析 <strong class="highlight">恋人 · 母女 · 朋友 · 师生 · 兄妹</strong> 五类关系。点击下方任意位置，依次呈现三组洞察：
-                <strong>📊 消息总量对比 · ⚖️ 对话天平(字数比例) · 🧲 心理阻力地图(摆线+气泡)</strong><br>
-                球的半径代表<strong>"情感质量/总字数"</strong>，摆线长度代表<strong>"平均响应延迟(秒)"</strong> — 线越长，心理距离越远。
+            <div class="hero-text">
+                我们回复不同人的速度，其实揭示了人际关系的“权力地图”。<br>
+                基于真实微信聊天记录，分析 <strong>恋人 · 母女 · 朋友 · 师生 · 兄妹</strong> 五类关系。
             </div>
-            <div class="insight-badge">
-                <i class="fas fa-mouse-pointer"></i> 点击卡片 → 逐步揭示社交心理图谱
+            <button class="start-btn" id="startBtn">
+                <i class="fas fa-chart-line"></i> 开始探索
+            </button>
+        </div>
+    </div>
+
+    <!-- 卡片选择页（三张卡片） -->
+    <div id="explorePage" class="explore-page">
+        <div class="explore-header">
+            <button class="back-btn" id="backToHomeBtn">
+                <i class="fas fa-arrow-left"></i> 返回首页
+            </button>
+        </div>
+        <div class="cards-grid">
+            <div class="insight-card" data-chart="chart1">
+                <div class="card-icon">📊</div>
+                <div class="card-title">消息总量对比</div>
+                <div class="card-desc">横向权力对比，谁占据了你社交能量的大头？<br>恋人 vs 朋友 vs 母女 vs 师生 vs 兄妹</div>
+                <div class="card-tag">点击查看详细图表 →</div>
             </div>
-            <div class="click-hint">
-                <i class="fas fa-arrow-down"></i> 鼠标悬浮图表查看详细数值 | 叙事驱动
+            <div class="insight-card" data-chart="chart2">
+                <div class="card-icon">⚖️</div>
+                <div class="card-title">对话天平</div>
+                <div class="card-desc">我的字数 vs 对方字数，谁倾注了更多的语言？<br>横向百分比柱状图，直观对比话语权</div>
+                <div class="card-tag">点击查看详细图表 →</div>
+            </div>
+            <div class="insight-card" data-chart="chart3">
+                <div class="card-icon">🎯</div>
+                <div class="card-title">心理阻力摆球</div>
+                <div class="card-desc">谁的消息你总是“秒回”，谁的消息又常常“石沉大海”？<br>摆线长度 = 回复延迟，球体大小 = 情感质量</div>
+                <div class="card-tag">点击查看物理摆球动画 →</div>
             </div>
         </div>
     </div>
 
-    <!-- 三个图表容器依次出现 -->
-    <div class="charts-grid" id="chartsGrid">
-        <!-- 图1: 消息总量横向对比 (柱状图) -->
-        <div class="chart-item" id="chart1Item">
-            <div class="card chart-card">
-                <div class="chart-header">
-                    <div class="chart-title"><i class="fas fa-envelope-open-text"></i> 消息总量 · 横向权力对比</div>
-                    <div class="chart-sub">谁占据了你社交能量的大头？</div>
-                </div>
-                <div id="barChart" class="chart-container"></div>
-            </div>
+    <!-- 图表详情页（动态切换内容） -->
+    <div id="detailPage" class="chart-detail-page">
+        <div class="explore-header">
+            <button class="back-btn" id="backToCardsBtn">
+                <i class="fas fa-arrow-left"></i> 返回卡片
+            </button>
         </div>
-
-        <!-- 图2: 字数比例 -->
-        <div class="chart-item" id="chart2Item">
-            <div class="card chart-card">
-                <div class="chart-header">
-                    <div class="chart-title"><i class="fas fa-weight-hanging"></i> 对话天平 · 谁更倾注语言？</div>
-                    <div class="chart-sub">纵向对比：我的字数 vs 对方字数</div>
-                </div>
-                <div id="ratioChart" class="chart-container"></div>
-            </div>
-        </div>
-
-        <!-- 图3: 摆线+气泡图 -->
-        <div class="chart-item" id="chart3Item">
-            <div class="card chart-card">
-                <div class="chart-header">
-                    <div class="chart-title"><i class="fas fa-fist-raised"></i> 心理阻力 · 社交距离地图</div>
-                    <div class="chart-sub">摆线长 = 平均响应延迟(秒) | 球半径 = 消息总字数</div>
-                </div>
-                <div id="bubbleChart" class="chart-container bubble-chart"></div>
-                <div style="font-size:0.7rem; text-align:center; padding-top:4px; color:#6c8eae;">
-                    <i class="fas fa-info-circle"></i> 半径越大，情感密度越高；摆线越长，「心理阻力」越大
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="footer-note">
-        <i class="fas fa-chart-simple"></i> 数据源自真实聊天记录统计 | 平均响应延迟基于时序对话计算
+        <div id="detailContent"></div>
     </div>
 </div>
 
 <script>
-    // ============================================================
-    // 数据定义 (基于 processedData.csv)
-    // ============================================================
+    // ======================== 数据定义 ========================
     const relationData = [
         { name: "恋人", totalWords: 8475, myWords: 3759, theirWords: 4716, myRatio: 0.4435, avgDelaySec: 776.35 },
         { name: "朋友", totalWords: 846, myWords: 147, theirWords: 699, myRatio: 0.1738, avgDelaySec: 12585 },
@@ -268,273 +307,358 @@
         { name: "兄妹", totalWords: 147, myWords: 99, theirWords: 48, myRatio: 0.6735, avgDelaySec: 3600 }
     ];
 
-    // 计算半径映射
+    // 计算球体半径映射 (总字数 -> 半径 15~55px)
     const minWords = Math.min(...relationData.map(d => d.totalWords));
     const maxWords = Math.max(...relationData.map(d => d.totalWords));
-    const getRadius = (words) => {
-        const minR = 14, maxR = 52;
-        if (maxWords === minWords) return (minR+maxR)/2;
+    function getRadius(words) {
+        const minR = 15, maxR = 55;
+        if (maxWords === minWords) return 35;
         return minR + (words - minWords) / (maxWords - minWords) * (maxR - minR);
-    };
-
-    // 存储图表实例，以便resize
-    let barChartInstance = null;
-    let ratioChartInstance = null;
-    let bubbleChartInstance = null;
-
-    // 图1: 消息总量柱状图
-    function renderBarChart() {
-        const chartDom = document.getElementById('barChart');
-        if (!chartDom) return;
-        
-        // 如果已有实例，先销毁
-        if (barChartInstance) {
-            barChartInstance.dispose();
-        }
-        
-        barChartInstance = echarts.init(chartDom);
-        const categories = relationData.map(item => item.name);
-        const totals = relationData.map(item => item.totalWords);
-        
-        const option = {
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: { type: 'shadow' },
-                formatter: function(params) {
-                    return `<strong>${params[0].name}</strong><br/>📨 消息总量: ${params[0].value} 字`;
-                },
-                backgroundColor: 'rgba(30,40,50,0.9)',
-                borderColor: '#e67e22',
-                borderWidth: 1,
-                textStyle: { color: '#fff', fontSize: 12 }
-            },
-            grid: { left: '8%', right: '5%', top: '10%', bottom: '5%', containLabel: true },
-            xAxis: { type: 'category', data: categories, axisLabel: { fontSize: 13, fontWeight: 500 }, axisLine: { lineStyle: { color: '#bc9a6c' } } },
-            yAxis: { type: 'value', name: '总字数 (字符数)', nameLocation: 'middle', nameGap: 45 },
-            series: [{
-                name: '消息总量', type: 'bar', data: totals,
-                itemStyle: {
-                    borderRadius: [8,8,0,0],
-                    color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-                        colorStops: [{ offset: 0, color: '#f39c12' }, { offset: 1, color: '#e67e22' }]
-                    },
-                    shadowColor: 'rgba(0,0,0,0.1)', shadowBlur: 6
-                },
-                label: { show: true, position: 'top', formatter: '{c}', fontWeight: 'bold', color: '#c25d1a' }
-            }]
-        };
-        barChartInstance.setOption(option);
     }
 
-    // 图2: 字数比例堆叠图
-    function renderRatioChart() {
-        const chartDom = document.getElementById('ratioChart');
-        if (!chartDom) return;
+    // 计算摆线长度映射 (延迟 -> 摆长，单位像素，范围 60~280px)
+    const minDelay = Math.min(...relationData.map(d => d.avgDelaySec));
+    const maxDelay = Math.max(...relationData.map(d => d.avgDelaySec));
+    function getPendulumLength(delaySec) {
+        const minLen = 70, maxLen = 280;
+        if (maxDelay === minDelay) return 150;
+        return minLen + (delaySec - minDelay) / (maxDelay - minDelay) * (maxLen - minLen);
+    }
+
+    // 存储当前摆球动画实例
+    let pendulumAnimationId = null;
+    let pendulumCtx = null;
+    let pendulumWidth = 0, pendulumHeight = 0;
+
+    // ======================== 图表1：消息总量柱状图 ========================
+    function renderChart1(containerId) {
+        const dom = document.getElementById(containerId);
+        if (!dom) return;
+        const chart = echarts.init(dom);
+        chart.setOption({
+            tooltip: { trigger: 'axis', formatter: p => `<strong>${p[0].name}</strong><br/>📨 总字数: ${p[0].value} 字` },
+            grid: { left: '8%', right: '5%', top: '10%', bottom: '5%', containLabel: true },
+            xAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontSize: 13, fontWeight: 500 } },
+            yAxis: { type: 'value', name: '总字数 (字符)' },
+            series: [{
+                type: 'bar', data: relationData.map(d => d.totalWords),
+                itemStyle: { borderRadius: [8,8,0,0], color: '#e67e22', label: { show: true, position: 'top', fontWeight: 'bold' } }
+            }]
+        });
+        return chart;
+    }
+
+    // ======================== 图表2：横向百分比堆叠柱状图（五根柱子等长，仅体现占比） ========================
+    function renderChart2(containerId) {
+        const dom = document.getElementById(containerId);
+        if (!dom) return;
+        const chart = echarts.init(dom);
         
-        if (ratioChartInstance) {
-            ratioChartInstance.dispose();
-        }
+        // 为每个关系构建 100% 的堆叠数据
+        const myPercent = relationData.map(d => d.myRatio * 100);
+        const theirPercent = relationData.map(d => (1 - d.myRatio) * 100);
         
-        ratioChartInstance = echarts.init(chartDom);
-        const relations = relationData.map(d => d.name);
-        const myWordVals = relationData.map(d => d.myWords);
-        const theirWordVals = relationData.map(d => d.theirWords);
-        
-        const option = {
+        chart.setOption({
             tooltip: {
                 trigger: 'axis',
                 axisPointer: { type: 'shadow' },
                 formatter: function(params) {
-                    let res = `<strong>${params[0].axisValue}</strong><br/>`;
-                    let myVal = 0, theirVal = 0;
-                    params.forEach(p => {
-                        if (p.seriesName === '我 (主动倾注)') myVal = p.value;
-                        if (p.seriesName === '对方 (回应/主导)') theirVal = p.value;
-                    });
-                    const total = myVal + theirVal;
-                    const myPerc = total > 0 ? (myVal/total*100).toFixed(1) : 0;
-                    const theirPerc = total > 0 ? (theirVal/total*100).toFixed(1) : 0;
-                    return `${res}<span style="color:#3498db">📝 我: ${myVal} 字 (${myPerc}%)</span><br/><span style="color:#e67e22">👥 对方: ${theirVal} 字 (${theirPerc}%)</span>`;
-                },
-                backgroundColor: 'rgba(20,28,38,0.9)'
+                    const idx = params[0].dataIndex;
+                    const data = relationData[idx];
+                    return `<strong>${data.name}</strong><br/>
+                    📝 我: ${data.myWords} 字 (${data.myRatio * 100}%)<br/>
+                    👥 对方: ${data.theirWords} 字 (${(1-data.myRatio)*100}%)`;
+                }
             },
-            grid: { left: '8%', right: '5%', top: '12%', bottom: '5%', containLabel: true },
-            xAxis: { type: 'category', data: relations, axisLabel: { fontSize: 13, fontWeight: 500 } },
-            yAxis: { type: 'value', name: '字数', nameLocation: 'middle', nameGap: 45 },
+            grid: { left: '12%', right: '8%', top: '10%, bottom: '8%', containLabel: true },
+            xAxis: { type: 'value', name: '字数占比 (%)', max: 100, axisLabel: { formatter: '{value}%' } },
+            yAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontSize: 13, fontWeight: 500 } },
             legend: { data: ['我 (主动倾注)', '对方 (回应/主导)'], left: 'left', itemWidth: 30 },
             series: [
                 {
-                    name: '我 (主动倾注)', type: 'bar', stack: 'total', data: myWordVals,
-                    itemStyle: { borderRadius: [6,0,0,6], color: '#3498db', label: { show: true, position: 'inside', formatter: (p) => `${p.value}` } }
+                    name: '我 (主动倾注)', type: 'bar', stack: 'total', data: myPercent,
+                    itemStyle: { color: '#3498db', borderRadius: [0, 4, 4, 0], label: { show: true, position: 'right', formatter: p => `${p.value.toFixed(1)}%` } }
                 },
                 {
-                    name: '对方 (回应/主导)', type: 'bar', stack: 'total', data: theirWordVals,
-                    itemStyle: { borderRadius: [0,6,6,0], color: '#e67e22', label: { show: true, position: 'inside', formatter: (p) => `${p.value}` } }
+                    name: '对方 (回应/主导)', type: 'bar', stack: 'total', data: theirPercent,
+                    itemStyle: { color: '#e67e22', borderRadius: [4, 0, 0, 4], label: { show: true, position: 'left', formatter: p => `${p.value.toFixed(1)}%` } }
                 }
             ]
-        };
-        ratioChartInstance.setOption(option);
+        });
+        return chart;
     }
 
-    // 图3: 摆线+气泡图
-    function renderBubbleChart() {
-        const chartDom = document.getElementById('bubbleChart');
-        if (!chartDom) return;
-        
-        if (bubbleChartInstance) {
-            bubbleChartInstance.dispose();
+    // ======================== 图表3：物理摆球动画 ========================
+    class PendulumSimulator {
+        constructor(canvasId, data) {
+            this.canvas = document.getElementById(canvasId);
+            if (!this.canvas) return;
+            this.ctx = this.canvas.getContext('2d');
+            this.data = data;
+            this.pendulums = [];
+            this.animationId = null;
+            this.lastTimestamp = 0;
+            this.init();
         }
-        
-        bubbleChartInstance = echarts.init(chartDom);
-        
-        const maxWordsVal = maxWords;
-        const minWordsVal = minWords;
-        const getEmotionY = (words) => {
-            return 30 + (words - minWordsVal) / (maxWordsVal - minWordsVal) * 60;
-        };
-        
-        const scatterData = relationData.map(item => ({
-            name: item.name,
-            value: [item.avgDelaySec, getEmotionY(item.totalWords)],
-            totalWords: item.totalWords,
-            delay: item.avgDelaySec,
-            radius: getRadius(item.totalWords),
-            myRatio: item.myRatio
-        }));
 
-        const lines = scatterData.map(point => ({
-            coords: [[point.value[0], 0], [point.value[0], point.value[1]]]
-        }));
-        
-        const option = {
-            tooltip: {
-                trigger: 'item',
-                formatter: (params) => {
-                    if (params.seriesName === '社交距离·心理阻力') {
-                        const data = params.data;
-                        return `<strong>${data.name}</strong><br/>
-                        📍 平均响应延迟: ${data.delay.toFixed(0)} 秒<br/>
-                        💬 消息总字数: ${data.totalWords} 字<br/>
-                        ⚖️ 我的字数占比: ${(data.myRatio*100).toFixed(1)}%`;
-                    }
-                    return params.name;
-                },
-                backgroundColor: 'rgba(0,0,0,0.75)',
-                borderColor: '#f39c12',
-                textStyle: { color: '#fff' }
-            },
-            xAxis: {
-                type: 'value',
-                name: '平均响应延迟 (秒) → 心理阻力 / 社交距离',
-                nameLocation: 'middle',
-                nameGap: 40,
-                axisLabel: { formatter: (val) => val >= 3600 ? `${(val/3600).toFixed(1)}h` : `${val}s` },
-                splitLine: { lineStyle: { type: 'dashed', color: '#ccc' } }
-            },
-            yAxis: {
-                type: 'value',
-                name: '情感共鸣指数 (总字数映射) ↑',
-                min: 10,
-                max: 100,
-                splitLine: { show: false }
-            },
-            series: [
-                {
-                    name: '摆线 (心理拉伸距离)',
-                    type: 'lines',
-                    data: lines,
-                    lineStyle: { color: '#e6bc85', width: 2.2, type: 'dashed', opacity: 0.7 },
-                    tooltip: { show: false }
-                },
-                {
-                    name: '社交距离·心理阻力',
-                    type: 'scatter',
-                    data: scatterData,
-                    symbolSize: (val) => {
-                        const point = scatterData.find(p => p.value[0] === val[0] && p.value[1] === val[1]);
-                        return point ? getRadius(point.totalWords) : 20;
-                    },
-                    itemStyle: {
-                        color: (param) => {
-                            const colors = ['#e67e22', '#2c3e50', '#16a085', '#c0392b', '#2980b9'];
-                            const idx = relationData.findIndex(d => d.name === param.data.name);
-                            return colors[idx % colors.length];
-                        },
-                        shadowBlur: 12,
-                        borderColor: '#fff',
-                        borderWidth: 2
-                    },
-                    label: {
-                        show: true,
-                        formatter: (param) => param.data.name,
-                        position: 'top',
-                        offset: [0, 12],
-                        fontWeight: 'bold',
-                        color: '#2c3e50',
-                        backgroundColor: 'rgba(255,248,225,0.8)',
-                        padding: [2, 8, 2, 8],
-                        borderRadius: 20,
-                        fontSize: 11
-                    },
-                    emphasis: { scale: 1.2 }
+        init() {
+            this.resize();
+            window.addEventListener('resize', () => this.resize());
+            this.createPendulums();
+            this.startAnimation();
+        }
+
+        resize() {
+            const container = this.canvas.parentElement;
+            const rect = container.getBoundingClientRect();
+            this.canvas.width = rect.width;
+            this.canvas.height = 500;
+            this.width = this.canvas.width;
+            this.height = this.canvas.height;
+            this.pivotX = this.width / 2;      // 所有摆球的公共悬挂点（中点）
+            this.pivotY = 80;                   // 悬挂点Y坐标
+            this.updatePendulumPositions();
+            this.draw();
+        }
+
+        createPendulums() {
+            // 根据数据创建摆球，按延迟排序（长的靠外，避免重叠）
+            const sorted = [...this.data].sort((a,b) => b.avgDelaySec - a.avgDelaySec);
+            const count = sorted.length;
+            const spacing = Math.min(140, this.width / (count + 1));
+            const startX = (this.width - spacing * (count - 1)) / 2;
+            
+            sorted.forEach((item, idx) => {
+                const length = getPendulumLength(item.avgDelaySec);
+                const radius = getRadius(item.totalWords);
+                // 每个摆球在x轴上的锚点偏移，使它们错开但共享同一个悬挂点Y
+                const anchorOffsetX = startX + idx * spacing - this.pivotX;
+                this.pendulums.push({
+                    name: item.name,
+                    delaySec: item.avgDelaySec,
+                    totalWords: item.totalWords,
+                    radius: radius,
+                    length: length,
+                    angle: 0,           // 初始角度0
+                    velocity: 0,
+                    anchorOffsetX: anchorOffsetX,  // 相对于 pivotX 的偏移
+                    color: this.getColor(idx)
+                });
+            });
+        }
+
+        getColor(idx) {
+            const colors = ['#e67e22', '#2c3e50', '#16a085', '#c0392b', '#2980b9'];
+            return colors[idx % colors.length];
+        }
+
+        updatePendulumPositions() {
+            // 更新每个摆球的物理位置（基于物理方程，但初始角度为0，需要外力触发摆动）
+            // 为了让摆动更生动，给每个摆球一个随机的初始小角度偏移
+            if (this.pendulums.length > 0 && this.pendulums[0].angle === 0) {
+                this.pendulums.forEach((p, i) => {
+                    // 初始角度: 不同摆球不同偏移，产生优雅的摆动效果
+                    p.angle = (Math.sin(i) * 0.4) * (p.delaySec / maxDelay) * 0.8;
+                    p.velocity = 0;
+                });
+            }
+        }
+
+        updatePhysics(deltaTime) {
+            const dt = Math.min(deltaTime / 1000, 0.032); // 限制最大时间步长
+            const g = 9.8;      // 重力加速度
+            const damping = 0.995; // 阻尼系数
+            
+            this.pendulums.forEach(p => {
+                // 单摆运动方程: angular acceleration = - (g / L) * angle
+                const alpha = -(g / p.length) * p.angle;
+                p.velocity += alpha * dt;
+                p.velocity *= damping;
+                p.angle += p.velocity * dt;
+                // 限制最大摆角
+                if (p.angle > Math.PI / 2.5) p.angle = Math.PI / 2.5;
+                if (p.angle < -Math.PI / 2.5) p.angle = -Math.PI / 2.5;
+            });
+        }
+
+        draw() {
+            if (!this.ctx) return;
+            this.ctx.clearRect(0, 0, this.width, this.height);
+            
+            // 绘制天花板横梁
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, this.pivotY - 5);
+            this.ctx.lineTo(this.width, this.pivotY - 5);
+            this.ctx.strokeStyle = '#b0a088';
+            this.ctx.lineWidth = 4;
+            this.ctx.stroke();
+            
+            // 绘制悬挂点圆环
+            this.ctx.beginPath();
+            this.ctx.arc(this.pivotX, this.pivotY, 8, 0, 2 * Math.PI);
+            this.ctx.fillStyle = '#c9b696';
+            this.ctx.shadowBlur = 0;
+            this.ctx.fill();
+            this.ctx.fillStyle = '#a67c52';
+            this.ctx.arc(this.pivotX, this.pivotY, 4, 0, 2 * Math.PI);
+            this.ctx.fill();
+            
+            // 绘制每个摆球
+            this.pendulums.forEach(p => {
+                // 计算摆锤位置
+                const bobX = this.pivotX + p.anchorOffsetX + Math.sin(p.angle) * p.length;
+                const bobY = this.pivotY + Math.cos(p.angle) * p.length;
+                
+                // 绘制摆线
+                const lineStartX = this.pivotX + p.anchorOffsetX;
+                const lineStartY = this.pivotY;
+                this.ctx.beginPath();
+                this.ctx.moveTo(lineStartX, lineStartY);
+                this.ctx.lineTo(bobX, bobY);
+                this.ctx.strokeStyle = '#c0a080';
+                this.ctx.lineWidth = 2.5;
+                this.ctx.stroke();
+                
+                // 绘制球体阴影
+                this.ctx.shadowColor = 'rgba(0,0,0,0.2)';
+                this.ctx.shadowBlur = 8;
+                // 绘制渐变球体
+                const grad = this.ctx.createRadialGradient(bobX - 5, bobY - 5, 3, bobX, bobY, p.radius);
+                grad.addColorStop(0, p.color);
+                grad.addColorStop(1, this.darkenColor(p.color));
+                this.ctx.beginPath();
+                this.ctx.arc(bobX, bobY, p.radius, 0, 2 * Math.PI);
+                this.ctx.fillStyle = grad;
+                this.ctx.fill();
+                this.ctx.strokeStyle = 'white';
+                this.ctx.lineWidth = 1.5;
+                this.ctx.stroke();
+                
+                // 绘制文字标签
+                this.ctx.shadowBlur = 0;
+                this.ctx.font = `bold ${Math.max(12, Math.min(16, p.radius / 3))}px "Segoe UI"`;
+                this.ctx.fillStyle = '#2c3e50';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText(p.name, bobX, bobY - p.radius - 8);
+                
+                // 可选：延迟数值小提示
+                this.ctx.font = '10px monospace';
+                this.ctx.fillStyle = '#8a6e4b';
+                const delayText = p.delaySec > 3600 ? `${(p.delaySec/3600).toFixed(1)}h` : `${p.delaySec.toFixed(0)}s`;
+                this.ctx.fillText(`延迟: ${delayText}`, bobX, bobY + p.radius + 12);
+            });
+        }
+
+        darkenColor(color) {
+            // 简单变暗
+            return color;
+        }
+
+        startAnimation() {
+            let lastTime = performance.now();
+            const animate = (now) => {
+                const delta = now - lastTime;
+                if (delta < 100) {
+                    this.updatePhysics(delta);
                 }
-            ],
-            grid: { left: '8%', right: '8%', top: '15%', bottom: '8%', containLabel: true }
-        };
-        bubbleChartInstance.setOption(option);
+                lastTime = now;
+                this.draw();
+                this.animationId = requestAnimationFrame(animate);
+            };
+            this.animationId = requestAnimationFrame(animate);
+        }
+
+        stopAnimation() {
+            if (this.animationId) {
+                cancelAnimationFrame(this.animationId);
+                this.animationId = null;
+            }
+        }
+
+        destroy() {
+            this.stopAnimation();
+        }
     }
 
-    // 核心：依次显示图表，并且延迟渲染以确保容器可见
-    let chartsRevealed = false;
+    let pendulumSim = null;
 
-    function revealChartsSequentially() {
-        if (chartsRevealed) return;
-        chartsRevealed = true;
-        
-        // 显示图1容器
-        const item1 = document.getElementById('chart1Item');
-        item1.classList.add('visible');
-        
-        // 延迟一小段时间确保DOM已显示，再渲染图表
-        setTimeout(() => {
-            renderBarChart();
-        }, 200);
-        
-        // 显示图2
-        setTimeout(() => {
-            const item2 = document.getElementById('chart2Item');
-            item2.classList.add('visible');
-            setTimeout(() => {
-                renderRatioChart();
-            }, 150);
-        }, 600);
-        
-        // 显示图3
-        setTimeout(() => {
-            const item3 = document.getElementById('chart3Item');
-            item3.classList.add('visible');
-            setTimeout(() => {
-                renderBubbleChart();
-            }, 150);
-        }, 1200);
+    function renderChart3(containerId) {
+        if (pendulumSim) {
+            pendulumSim.destroy();
+            pendulumSim = null;
+        }
+        pendulumSim = new PendulumSimulator(containerId, relationData);
+        return pendulumSim;
     }
 
-    // 监听首页卡片点击
-    const introCard = document.getElementById('introCard');
-    introCard.addEventListener('click', (e) => {
-        e.stopPropagation();
-        revealChartsSequentially();
+    // ======================== 页面路由逻辑 ========================
+    const homePage = document.getElementById('homePage');
+    const explorePage = document.getElementById('explorePage');
+    const detailPage = document.getElementById('detailPage');
+    const detailContent = document.getElementById('detailContent');
+    
+    let currentChart = null;
+    let currentEChart = null;
+
+    function showPage(pageName) {
+        homePage.style.display = 'none';
+        explorePage.style.display = 'none';
+        detailPage.style.display = 'none';
+        if (pageName === 'home') homePage.style.display = 'flex';
+        if (pageName === 'explore') explorePage.style.display = 'block';
+        if (pageName === 'detail') detailPage.style.display = 'block';
+    }
+
+    function renderDetailChart(chartType) {
+        detailContent.innerHTML = `
+            <div class="chart-container-box">
+                <div class="chart-header">
+                    <div class="chart-title">${chartType === 'chart1' ? '📊 消息总量对比' : chartType === 'chart2' ? '⚖️ 对话天平' : '🎯 心理阻力摆球'}</div>
+                    <div class="chart-sub">${chartType === 'chart1' ? '横向权力对比，谁占据了你社交能量的大头？' : chartType === 'chart2' ? '我的字数 vs 对方字数，谁倾注了更多的语言？' : '摆线长度 = 回复延迟，球体大小 = 情感质量'}</div>
+                </div>
+                <div id="dynamicChart" class="chart-box" style="${chartType === 'chart3' ? 'padding:0; background:#fefcf7; border-radius:1.5rem;' : ''}"></div>
+            </div>
+        `;
+        const container = document.getElementById('dynamicChart');
+        if (chartType === 'chart1') {
+            if (currentEChart && currentEChart.dispose) currentEChart.dispose();
+            currentEChart = renderChart1('dynamicChart');
+        } else if (chartType === 'chart2') {
+            if (currentEChart && currentEChart.dispose) currentEChart.dispose();
+            currentEChart = renderChart2('dynamicChart');
+        } else if (chartType === 'chart3') {
+            if (currentEChart && currentEChart.dispose) currentEChart.dispose();
+            // 摆球需要canvas容器
+            const canvasHtml = `<canvas id="pendulumCanvas" width="1000" height="500" style="width:100%; height:500px; display:block;"></canvas>`;
+            document.getElementById('dynamicChart').innerHTML = canvasHtml;
+            renderChart3('pendulumCanvas');
+        }
+    }
+
+    // 事件绑定
+    document.getElementById('startBtn').addEventListener('click', () => {
+        showPage('explore');
     });
-
-    // 窗口大小改变时，重新调整所有图表
-    window.addEventListener('resize', () => {
-        if (barChartInstance) barChartInstance.resize();
-        if (ratioChartInstance) ratioChartInstance.resize();
-        if (bubbleChartInstance) bubbleChartInstance.resize();
+    document.getElementById('backToHomeBtn').addEventListener('click', () => {
+        if (pendulumSim) pendulumSim.destroy();
+        showPage('home');
+    });
+    document.getElementById('backToCardsBtn').addEventListener('click', () => {
+        if (pendulumSim) pendulumSim.destroy();
+        showPage('explore');
     });
     
-    // 控制台输出，确认脚本已加载
-    console.log('页面已加载，点击卡片开始探索数据可视化');
+    document.querySelectorAll('.insight-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            const chartType = card.getAttribute('data-chart');
+            currentChart = chartType;
+            renderDetailChart(chartType);
+            showPage('detail');
+        });
+    });
+
+    // 初始显示首页
+    showPage('home');
 </script>
 </body>
 </html>
