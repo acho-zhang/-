@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>社交心理 · 消息回复的隐形压力</title>
+    <title>社交心理 · 消息回复的隐形压力 | 莫兰迪粒子叙事</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -14,16 +17,42 @@
         }
 
         body {
-            background: linear-gradient(145deg, #f0f2f5 0%, #e8ecf1 100%);
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            color: #1a2c3e;
+            background: #ece9e4;  /* 莫兰迪暖灰基底 */
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: #3b3a36;
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 粒子画布背景 */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.45;
         }
 
         .page {
             max-width: 1300px;
             margin: 0 auto;
-            padding: 2rem 1.5rem;
+            padding: 2rem 1.8rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 卡片通用样式 - 莫兰迪柔和玻璃效果 */
+        .card {
+            background: rgba(250, 248, 245, 0.85);
+            backdrop-filter: blur(3px);
+            border-radius: 2rem;
+            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(230, 220, 210, 0.6);
+            transition: all 0.3s ease;
         }
 
         /* 首页样式 */
@@ -36,60 +65,66 @@
         }
 
         .hero-card {
-            background: linear-gradient(135deg, #ffffff 0%, #fef9ef 100%);
+            background: rgba(253, 251, 247, 0.96);
             border-radius: 2.5rem;
-            padding: 3rem 2.5rem;
+            padding: 3rem 2.8rem;
             text-align: center;
-            box-shadow: 0 30px 45px -20px rgba(0,0,0,0.2);
-            max-width: 800px;
-            margin: 0 auto;
+            box-shadow: 0 25px 40px -16px rgba(0, 0, 0, 0.12);
+            border: 1px solid #e8dfd5;
+            backdrop-filter: blur(2px);
         }
 
         .hero-title {
-            font-size: 2.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #d35400, #f39c12);
+            font-size: 2.6rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(120deg, #b87c4f, #cb9e72);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
         }
 
         .hero-sub {
-            font-size: 1.2rem;
-            color: #5a6e7c;
-            border-left: 4px solid #f39c12;
+            font-size: 1.1rem;
+            color: #8f7a66;
+            border-left: 4px solid #dbb88c;
             padding-left: 1rem;
             margin: 1rem auto;
             display: inline-block;
+            font-weight: 450;
         }
 
         .hero-text {
-            color: #4a627a;
+            color: #6b6258;
             line-height: 1.6;
             margin: 1.5rem 0;
+            font-size: 1rem;
         }
 
         .start-btn {
-            background: linear-gradient(135deg, #e67e22, #f39c12);
+            background: #cfa67b;
             border: none;
-            padding: 1rem 2.5rem;
-            font-size: 1.2rem;
+            padding: 0.9rem 2.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            color: white;
-            border-radius: 50px;
+            color: #fffefc;
+            border-radius: 48px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.25s;
             display: inline-flex;
             align-items: center;
             gap: 10px;
+            box-shadow: 0 6px 14px rgba(160, 110, 70, 0.25);
         }
 
         .start-btn:hover {
+            background: #bc8e60;
             transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(130, 90, 55, 0.2);
         }
 
-        /* 探索页面 */
+        /* 探索页卡片网格 */
         .explore-page {
             display: none;
         }
@@ -99,71 +134,76 @@
         }
 
         .back-btn {
-            background: rgba(255,255,255,0.9);
+            background: rgba(240, 233, 225, 0.9);
             border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 30px;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
             cursor: pointer;
-            font-size: 0.9rem;
-            color: #e67e22;
+            font-size: 0.85rem;
+            color: #9b7b5e;
             font-weight: 500;
             transition: all 0.2s;
+            backdrop-filter: blur(4px);
         }
 
         .back-btn:hover {
-            background: #e67e22;
-            color: white;
+            background: #cfbcab;
+            color: #fefaf5;
+            transform: translateX(-3px);
         }
 
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            margin-top: 1.5rem;
+            margin-top: 1.8rem;
         }
 
         .insight-card {
-            background: white;
+            background: rgba(253, 250, 245, 0.92);
             border-radius: 1.8rem;
-            padding: 1.8rem;
+            padding: 1.8rem 1.5rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 25px -10px rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid #e3d9cf;
             text-align: center;
+            backdrop-filter: blur(2px);
         }
 
         .insight-card:hover {
             transform: translateY(-8px);
-            border-color: #f39c12;
-            box-shadow: 0 20px 35px -12px rgba(230,126,34,0.2);
+            background: #fefaf5;
+            border-color: #d6c4b2;
+            box-shadow: 0 20px 28px -12px rgba(100, 70, 45, 0.15);
         }
 
         .card-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: 2.4rem;
+            margin-bottom: 0.8rem;
+            color: #b68962;
         }
 
         .card-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 0.8rem;
+            font-size: 1.45rem;
+            font-weight: 600;
+            color: #5c4c3a;
+            margin-bottom: 0.6rem;
         }
 
         .card-desc {
-            color: #6c86a0;
-            font-size: 0.9rem;
-            line-height: 1.5;
+            color: #8b7a68;
+            font-size: 0.85rem;
+            line-height: 1.45;
             margin-bottom: 1rem;
         }
 
         .card-tag {
+            background: #f0e7df;
+            padding: 0.25rem 1rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            color: #b28b65;
             display: inline-block;
-            background: #fdf2e6;
-            padding: 0.3rem 1rem;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            color: #e67e22;
         }
 
         /* 图表详情页 */
@@ -172,11 +212,12 @@
         }
 
         .chart-container-box {
-            background: white;
+            background: rgba(253, 250, 245, 0.92);
             border-radius: 2rem;
             padding: 1.5rem;
             margin-top: 1.5rem;
-            box-shadow: 0 10px 30px -12px rgba(0,0,0,0.1);
+            backdrop-filter: blur(2px);
+            border: 1px solid #e6dfd6;
         }
 
         .chart-header {
@@ -185,54 +226,57 @@
             align-items: center;
             flex-wrap: wrap;
             margin-bottom: 1rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 2px solid #f0e6d8;
+            padding-bottom: 0.6rem;
+            border-bottom: 2px solid #e1d5ca;
         }
 
         .chart-title {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #2c3e50;
+            font-size: 1.5rem;
+            font-weight: 650;
+            color: #5e4b38;
         }
 
         .chart-sub {
-            color: #e67e22;
-            font-size: 0.85rem;
+            color: #bb9879;
+            font-size: 0.8rem;
+            font-weight: 450;
         }
 
         .chart-box {
             width: 100%;
-            height: 450px;
+            height: 460px;
         }
 
         .footer-note {
             text-align: center;
             margin-top: 2rem;
-            font-size: 0.75rem;
-            color: #8ba3bc;
+            font-size: 0.7rem;
+            color: #b7a48e;
+            letter-spacing: 0.3px;
         }
 
         @media (max-width: 700px) {
-            .hero-title { font-size: 2rem; }
+            .hero-title { font-size: 1.9rem; }
             .cards-grid { grid-template-columns: 1fr; }
-            .chart-box { height: 350px; }
+            .chart-box { height: 360px; }
         }
     </style>
 </head>
 <body>
+<canvas id="particles-canvas"></canvas>
 <div class="page">
     <!-- 首页 -->
     <div id="homePage" class="home-page">
-        <div class="hero-card">
+        <div class="hero-card card">
             <div class="hero-title">
-                <i class="fas fa-comment-slash"></i> 消息回复的隐形压力
+                <i class="fas fa-comment-dots"></i> 消息回复的隐形压力
             </div>
             <div class="hero-sub">
                 「数字时代的偏心」—— 即时弹窗 vs 深海沉船
             </div>
             <div class="hero-text">
-                我们回复不同人的速度，其实揭示了人际关系的"权力地图"。<br>
-                基于真实微信聊天记录，分析 <strong>恋人 · 母女 · 朋友 · 师生 · 兄妹</strong> 五类关系。
+                我们回复不同人的速度，其实揭示了人际关系的“权力地图”。<br>
+                基于真实聊天记录，分析 <strong>恋人 · 母女 · 朋友 · 师生 · 兄妹</strong> 五类关系。
             </div>
             <button class="start-btn" id="startBtn">
                 <i class="fas fa-chart-line"></i> 开始探索
@@ -243,28 +287,26 @@
     <!-- 卡片选择页 -->
     <div id="explorePage" class="explore-page">
         <div class="explore-header">
-            <button class="back-btn" id="backToHomeBtn">
-                <i class="fas fa-arrow-left"></i> 返回首页
-            </button>
+            <button class="back-btn" id="backToHomeBtn"><i class="fas fa-arrow-left"></i> 返回首页</button>
         </div>
         <div class="cards-grid">
             <div class="insight-card" data-chart="chart1">
                 <div class="card-icon">📊</div>
                 <div class="card-title">消息总量对比</div>
-                <div class="card-desc">横向权力对比，谁占据了你社交能量的大头？<br>恋人 vs 朋友 vs 母女 vs 师生 vs 兄妹</div>
-                <div class="card-tag">点击查看详细图表 →</div>
+                <div class="card-desc">横向权力对比，谁占据了你社交能量的大头？<br>恋人·朋友·母女·师生·兄妹</div>
+                <div class="card-tag">点击查看 →</div>
             </div>
             <div class="insight-card" data-chart="chart2">
                 <div class="card-icon">⚖️</div>
                 <div class="card-title">对话天平</div>
-                <div class="card-desc">我的字数 vs 对方字数，谁倾注了更多的语言？<br>横向百分比柱状图，直观对比话语权</div>
-                <div class="card-tag">点击查看详细图表 →</div>
+                <div class="card-desc">我的字数 vs 对方字数，谁倾注了更多的语言？<br>横向百分比柱状图，直观话语权</div>
+                <div class="card-tag">点击查看 →</div>
             </div>
             <div class="insight-card" data-chart="chart3">
                 <div class="card-icon">🎯</div>
                 <div class="card-title">心理阻力摆球</div>
-                <div class="card-desc">谁的消息你总是"秒回"，谁的消息又常常"石沉大海"？<br>摆线长度 = 回复延迟，球体大小 = 情感质量</div>
-                <div class="card-tag">点击查看物理摆球动画 →</div>
+                <div class="card-desc">谁的消息你总是“秒回”，谁的消息又常常“石沉大海”？<br>摆线长度 = 回复延迟，球体大小 = 情感质量</div>
+                <div class="card-tag">点击查看物理摆球 →</div>
             </div>
         </div>
     </div>
@@ -272,359 +314,388 @@
     <!-- 图表详情页 -->
     <div id="detailPage" class="chart-detail-page">
         <div class="explore-header">
-            <button class="back-btn" id="backToCardsBtn">
-                <i class="fas fa-arrow-left"></i> 返回卡片
-            </button>
+            <button class="back-btn" id="backToCardsBtn"><i class="fas fa-arrow-left"></i> 返回卡片</button>
         </div>
         <div id="detailContent"></div>
     </div>
 </div>
 
 <script>
-    // 数据定义
-    const relationData = [
-        { name: "恋人", totalWords: 8475, myWords: 3759, theirWords: 4716, myRatio: 0.4435, avgDelaySec: 776.35 },
-        { name: "朋友", totalWords: 846, myWords: 147, theirWords: 699, myRatio: 0.1738, avgDelaySec: 12585 },
-        { name: "母女", totalWords: 775, myWords: 373, theirWords: 402, myRatio: 0.4813, avgDelaySec: 940 },
-        { name: "师生", totalWords: 631, myWords: 246, theirWords: 385, myRatio: 0.3899, avgDelaySec: 2201.54 },
-        { name: "兄妹", totalWords: 147, myWords: 99, theirWords: 48, myRatio: 0.6735, avgDelaySec: 3600 }
-    ];
+    (function() {
+        // ---------- 莫兰迪色系辅助 + 粒子系统 ----------
+        const canvas = document.getElementById('particles-canvas');
+        let ctx = canvas.getContext('2d');
+        let width = window.innerWidth, height = window.innerHeight;
+        let particles = [];
 
-    // 计算球体半径
-    const minWords = Math.min(...relationData.map(d => d.totalWords));
-    const maxWords = Math.max(...relationData.map(d => d.totalWords));
-    function getRadius(words) {
-        const minR = 15, maxR = 55;
-        if (maxWords === minWords) return 35;
-        return minR + (words - minWords) / (maxWords - minWords) * (maxR - minR);
-    }
-
-    // 计算摆线长度
-    const minDelay = Math.min(...relationData.map(d => d.avgDelaySec));
-    const maxDelay = Math.max(...relationData.map(d => d.avgDelaySec));
-    function getPendulumLength(delaySec) {
-        const minLen = 70, maxLen = 280;
-        if (maxDelay === minDelay) return 150;
-        return minLen + (delaySec - minDelay) / (maxDelay - minDelay) * (maxLen - minLen);
-    }
-
-    let pendulumSim = null;
-    let currentChart = null;
-
-    // 获取DOM元素
-    const homePage = document.getElementById('homePage');
-    const explorePage = document.getElementById('explorePage');
-    const detailPage = document.getElementById('detailPage');
-    const detailContent = document.getElementById('detailContent');
-    const startBtn = document.getElementById('startBtn');
-    const backToHomeBtn = document.getElementById('backToHomeBtn');
-    const backToCardsBtn = document.getElementById('backToCardsBtn');
-
-    // 页面切换
-    function showPage(pageName) {
-        // 清理摆球动画
-        if (pendulumSim) {
-            if (pendulumSim.stopAnimation) pendulumSim.stopAnimation();
-            pendulumSim = null;
-        }
-        
-        homePage.style.display = 'none';
-        explorePage.style.display = 'none';
-        detailPage.style.display = 'none';
-        
-        if (pageName === 'home') {
-            homePage.style.display = 'flex';
-        } else if (pageName === 'explore') {
-            explorePage.style.display = 'block';
-        } else if (pageName === 'detail') {
-            detailPage.style.display = 'block';
-        }
-    }
-
-    // 图表1：柱状图
-    function renderChart1(containerId) {
-        const dom = document.getElementById(containerId);
-        if (!dom) return;
-        const chart = echarts.init(dom);
-        chart.setOption({
-            tooltip: { trigger: 'axis', formatter: function(p) {
-                return `<strong>${p[0].name}</strong><br/>📨 总字数: ${p[0].value} 字`;
-            }},
-            grid: { left: '8%', right: '5%', top: '10%', bottom: '5%', containLabel: true },
-            xAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontSize: 13 } },
-            yAxis: { type: 'value', name: '总字数 (字符)' },
-            series: [{
-                type: 'bar', data: relationData.map(d => d.totalWords),
-                itemStyle: { borderRadius: [8,8,0,0], color: '#e67e22', label: { show: true, position: 'top', fontWeight: 'bold' } }
-            }]
-        });
-        return chart;
-    }
-
-    // 图表2：横向百分比堆叠图
-    function renderChart2(containerId) {
-        const dom = document.getElementById(containerId);
-        if (!dom) return;
-        const chart = echarts.init(dom);
-        
-        const myPercent = relationData.map(d => d.myRatio * 100);
-        const theirPercent = relationData.map(d => (1 - d.myRatio) * 100);
-        
-        chart.setOption({
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: { type: 'shadow' },
-                formatter: function(params) {
-                    const idx = params[0].dataIndex;
-                    const data = relationData[idx];
-                    return `<strong>${data.name}</strong><br/>
-                    📝 我: ${data.myWords} 字 (${(data.myRatio * 100).toFixed(1)}%)<br/>
-                    👥 对方: ${data.theirWords} 字 (${((1-data.myRatio) * 100).toFixed(1)}%)`;
-                }
-            },
-            grid: { left: '12%', right: '8%', top: '10%', bottom: '8%', containLabel: true },
-            xAxis: { type: 'value', name: '字数占比 (%)', max: 100, axisLabel: { formatter: '{value}%' } },
-            yAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontSize: 13 } },
-            legend: { data: ['我 (主动倾注)', '对方 (回应/主导)'], left: 'left' },
-            series: [
-                {
-                    name: '我 (主动倾注)', type: 'bar', stack: 'total', data: myPercent,
-                    itemStyle: { color: '#3498db', borderRadius: [0, 4, 4, 0], 
-                        label: { show: true, position: 'right', formatter: p => p.value.toFixed(1) + '%' } }
-                },
-                {
-                    name: '对方 (回应/主导)', type: 'bar', stack: 'total', data: theirPercent,
-                    itemStyle: { color: '#e67e22', borderRadius: [4, 0, 0, 4],
-                        label: { show: true, position: 'left', formatter: p => p.value.toFixed(1) + '%' } }
-                }
-            ]
-        });
-        return chart;
-    }
-
-    // 图表3：摆球动画
-    class PendulumSimulator {
-        constructor(canvasId, data) {
-            this.canvas = document.getElementById(canvasId);
-            if (!this.canvas) return;
-            this.ctx = this.canvas.getContext('2d');
-            this.data = data;
-            this.pendulums = [];
-            this.animationId = null;
-            this.init();
-        }
-
-        init() {
-            this.resize();
-            window.addEventListener('resize', () => this.resize());
-            this.createPendulums();
-            this.startAnimation();
-        }
-
-        resize() {
-            const container = this.canvas.parentElement;
-            if (!container) return;
-            const rect = container.getBoundingClientRect();
-            this.canvas.width = rect.width;
-            this.canvas.height = 500;
-            this.width = this.canvas.width;
-            this.height = this.canvas.height;
-            this.pivotX = this.width / 2;
-            this.pivotY = 80;
-            this.draw();
-        }
-
-        createPendulums() {
-            const sorted = [...this.data].sort((a, b) => b.avgDelaySec - a.avgDelaySec);
-            const count = sorted.length;
-            const spacing = Math.min(130, (this.width - 100) / count);
-            const startX = (this.width - spacing * (count - 1)) / 2;
-            
-            const colors = ['#e67e22', '#2c3e50', '#16a085', '#c0392b', '#2980b9'];
-            
-            sorted.forEach((item, idx) => {
-                const length = getPendulumLength(item.avgDelaySec);
-                const radius = getRadius(item.totalWords);
-                const anchorOffsetX = startX + idx * spacing - this.pivotX;
-                this.pendulums.push({
-                    name: item.name,
-                    delaySec: item.avgDelaySec,
-                    totalWords: item.totalWords,
-                    radius: radius,
-                    length: length,
-                    angle: Math.sin(idx) * 0.3,
-                    velocity: 0,
-                    anchorOffsetX: anchorOffsetX,
-                    color: colors[idx % colors.length]
+        function initParticles() {
+            const particleCount = 70;
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 3 + 1.2,
+                    alpha: Math.random() * 0.3 + 0.1,
+                    speedX: (Math.random() - 0.5) * 0.3,
+                    speedY: (Math.random() - 0.5) * 0.2,
+                    color: `rgba(170, 140, 110, ${Math.random() * 0.3 + 0.1})`
                 });
+            }
+        }
+
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        function drawParticles() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, width, height);
+            for (let p of particles) {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+                p.x += p.speedX;
+                p.y += p.speedY;
+                if (p.x < -20) p.x = width + 20;
+                if (p.x > width + 20) p.x = -20;
+                if (p.y < -20) p.y = height + 20;
+                if (p.y > height + 20) p.y = -20;
+            }
+            requestAnimationFrame(drawParticles);
+        }
+
+        function setupParticles() {
+            resizeCanvas();
+            initParticles();
+            drawParticles();
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+                particles = [];
+                initParticles();
             });
         }
+        setupParticles();
 
-        updatePhysics(deltaTime) {
-            const dt = Math.min(deltaTime / 1000, 0.032);
-            const g = 9.8;
-            const damping = 0.995;
-            
-            this.pendulums.forEach(p => {
-                const alpha = -(g / p.length) * p.angle;
-                p.velocity += alpha * dt;
-                p.velocity *= damping;
-                p.angle += p.velocity * dt;
-                if (p.angle > Math.PI / 2.5) p.angle = Math.PI / 2.5;
-                if (p.angle < -Math.PI / 2.5) p.angle = -Math.PI / 2.5;
+        // ---------- 核心数据 ----------
+        const relationData = [
+            { name: "恋人", totalWords: 8475, myWords: 3759, theirWords: 4716, myRatio: 0.4435, avgDelaySec: 776.35 },
+            { name: "朋友", totalWords: 846, myWords: 147, theirWords: 699, myRatio: 0.1738, avgDelaySec: 12585 },
+            { name: "母女", totalWords: 775, myWords: 373, theirWords: 402, myRatio: 0.4813, avgDelaySec: 940 },
+            { name: "师生", totalWords: 631, myWords: 246, theirWords: 385, myRatio: 0.3899, avgDelaySec: 2201.54 },
+            { name: "兄妹", totalWords: 147, myWords: 99, theirWords: 48, myRatio: 0.6735, avgDelaySec: 3600 }
+        ];
+
+        const minWords = Math.min(...relationData.map(d => d.totalWords));
+        const maxWords = Math.max(...relationData.map(d => d.totalWords));
+        function getRadius(words) {
+            const minR = 18, maxR = 58;
+            if (maxWords === minWords) return 38;
+            return minR + (words - minWords) / (maxWords - minWords) * (maxR - minR);
+        }
+
+        const minDelay = Math.min(...relationData.map(d => d.avgDelaySec));
+        const maxDelay = Math.max(...relationData.map(d => d.avgDelaySec));
+        // 摆线长度映射: 延迟越大摆线越长 (视觉拉伸)
+        function getPendulumLength(delaySec) {
+            const minLen = 85, maxLen = 310;
+            if (maxDelay === minDelay) return 160;
+            return minLen + (delaySec - minDelay) / (maxDelay - minDelay) * (maxLen - minLen);
+        }
+
+        // 摆动速度映射: 延迟越长摆动越慢 (象征沉重/滞后) 但为了"符合数据比例+加快观感"使用周期因子
+        // 物理 angular frequency = sqrt(g/L)，但我们希望长摆摆动稍慢，但整体动画轻快，通过初始角速度 + 阻尼微调
+        // 我们给每个摆球不同的速度增益因子，让延迟大的摆球最大摆动角速度略小，符合隐喻，但整体更新加快使用时间步长增益。
+        // 为了“速度符合数据比例”，基于延迟归一化速度系数: 延迟越大，摆动越迟缓 (阻力感)
+        function getAngularSpeedFactor(delaySec) {
+            // 延迟越小摆动越轻快，系数高; 延迟大系数低
+            const norm = (delaySec - minDelay) / (maxDelay - minDelay);
+            return 0.7 + (1 - norm) * 0.8;  // 最小0.7 最大1.5
+        }
+
+        let pendulumSim = null;
+        let currentChart = null;
+
+        // DOM 元素
+        const homePage = document.getElementById('homePage');
+        const explorePage = document.getElementById('explorePage');
+        const detailPage = document.getElementById('detailPage');
+        const detailContent = document.getElementById('detailContent');
+        const startBtn = document.getElementById('startBtn');
+        const backToHomeBtn = document.getElementById('backToHomeBtn');
+        const backToCardsBtn = document.getElementById('backToCardsBtn');
+
+        function showPage(pageName) {
+            if (pendulumSim && pendulumSim.stopAnimation) pendulumSim.stopAnimation();
+            pendulumSim = null;
+            homePage.style.display = 'none';
+            explorePage.style.display = 'none';
+            detailPage.style.display = 'none';
+            if (pageName === 'home') homePage.style.display = 'flex';
+            if (pageName === 'explore') explorePage.style.display = 'block';
+            if (pageName === 'detail') detailPage.style.display = 'block';
+        }
+
+        // 图表1: 总量柱状图
+        function renderChart1(containerId) {
+            const dom = document.getElementById(containerId);
+            if (!dom) return null;
+            const chart = echarts.init(dom);
+            chart.setOption({
+                tooltip: { trigger: 'axis', formatter: p => `<strong>${p[0].name}</strong><br/>📨 总字数: ${p[0].value} 字` },
+                grid: { left: '8%', right: '5%', top: '12%', bottom: '5%', containLabel: true },
+                xAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontWeight: 500, color: '#7c6854' } },
+                yAxis: { type: 'value', name: '总字数 (字符)', nameTextStyle: { color: '#9e8771' } },
+                series: [{
+                    type: 'bar', data: relationData.map(d => d.totalWords),
+                    itemStyle: { borderRadius: [10,10,0,0], color: '#cfa270', label: { show: true, position: 'top', fontWeight: 'bold', color: '#a5734a' } }
+                }]
             });
+            return chart;
         }
 
-        draw() {
-            if (!this.ctx || !this.width) return;
-            this.ctx.clearRect(0, 0, this.width, this.height);
-            
-            // 横梁
-            this.ctx.beginPath();
-            this.ctx.moveTo(0, this.pivotY - 5);
-            this.ctx.lineTo(this.width, this.pivotY - 5);
-            this.ctx.strokeStyle = '#b0a088';
-            this.ctx.lineWidth = 4;
-            this.ctx.stroke();
-            
-            // 悬挂点
-            this.ctx.beginPath();
-            this.ctx.arc(this.pivotX, this.pivotY, 8, 0, 2 * Math.PI);
-            this.ctx.fillStyle = '#c9b696';
-            this.ctx.fill();
-            this.ctx.fillStyle = '#a67c52';
-            this.ctx.beginPath();
-            this.ctx.arc(this.pivotX, this.pivotY, 4, 0, 2 * Math.PI);
-            this.ctx.fill();
-            
-            // 绘制每个摆球
-            this.pendulums.forEach(p => {
-                const bobX = this.pivotX + p.anchorOffsetX + Math.sin(p.angle) * p.length;
-                const bobY = this.pivotY + Math.cos(p.angle) * p.length;
-                const lineStartX = this.pivotX + p.anchorOffsetX;
-                const lineStartY = this.pivotY;
-                
-                this.ctx.beginPath();
-                this.ctx.moveTo(lineStartX, lineStartY);
-                this.ctx.lineTo(bobX, bobY);
-                this.ctx.strokeStyle = '#c0a080';
-                this.ctx.lineWidth = 2.5;
-                this.ctx.stroke();
-                
-                this.ctx.shadowColor = 'rgba(0,0,0,0.2)';
-                this.ctx.shadowBlur = 8;
-                this.ctx.beginPath();
-                this.ctx.arc(bobX, bobY, p.radius, 0, 2 * Math.PI);
-                this.ctx.fillStyle = p.color;
-                this.ctx.fill();
-                this.ctx.strokeStyle = 'white';
-                this.ctx.lineWidth = 1.5;
-                this.ctx.stroke();
-                
-                this.ctx.shadowBlur = 0;
-                this.ctx.font = `bold ${Math.max(12, Math.min(16, p.radius / 3))}px "Segoe UI"`;
-                this.ctx.fillStyle = '#2c3e50';
-                this.ctx.textAlign = 'center';
-                this.ctx.fillText(p.name, bobX, bobY - p.radius - 8);
-                
-                this.ctx.font = '10px monospace';
-                this.ctx.fillStyle = '#8a6e4b';
-                const delayText = p.delaySec > 3600 ? `${(p.delaySec/3600).toFixed(1)}h` : `${p.delaySec.toFixed(0)}s`;
-                this.ctx.fillText(`延迟: ${delayText}`, bobX, bobY + p.radius + 12);
+        // 图表2: 横向百分比堆叠 (等长柱子 100%)
+        function renderChart2(containerId) {
+            const dom = document.getElementById(containerId);
+            if (!dom) return null;
+            const chart = echarts.init(dom);
+            const myPercent = relationData.map(d => d.myRatio * 100);
+            const theirPercent = relationData.map(d => (1 - d.myRatio) * 100);
+            chart.setOption({
+                tooltip: {
+                    trigger: 'axis', axisPointer: { type: 'shadow' },
+                    formatter: function(params) {
+                        const idx = params[0].dataIndex;
+                        const data = relationData[idx];
+                        return `<strong>${data.name}</strong><br/>📝 我: ${data.myWords} 字 (${(data.myRatio*100).toFixed(1)}%)<br/>👥 对方: ${data.theirWords} 字 (${((1-data.myRatio)*100).toFixed(1)}%)`;
+                    }
+                },
+                grid: { left: '12%', right: '8%', top: '12%', bottom: '8%', containLabel: true },
+                xAxis: { type: 'value', name: '字数占比 (%)', max: 100, axisLabel: { formatter: '{value}%' } },
+                yAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontWeight: 500, color: '#7c6854' } },
+                legend: { data: ['我 (主动倾注)', '对方 (回应/主导)'], left: 'left', textStyle: { color: '#886e56' } },
+                series: [
+                    { name: '我 (主动倾注)', type: 'bar', stack: 'total', data: myPercent, itemStyle: { color: '#9abf9e', borderRadius: [0, 6, 6, 0], label: { show: true, position: 'right', formatter: p => p.value.toFixed(1)+'%' } } },
+                    { name: '对方 (回应/主导)', type: 'bar', stack: 'total', data: theirPercent, itemStyle: { color: '#dcb68a', borderRadius: [6, 0, 0, 6], label: { show: true, position: 'left', formatter: p => p.value.toFixed(1)+'%' } } }
+                ]
             });
+            return chart;
         }
 
-        startAnimation() {
-            let lastTime = performance.now();
-            const animate = (now) => {
-                const delta = now - lastTime;
-                if (delta < 100) {
-                    this.updatePhysics(delta);
-                }
-                lastTime = now;
-                this.draw();
-                this.animationId = requestAnimationFrame(animate);
-            };
-            this.animationId = requestAnimationFrame(animate);
-        }
-
-        stopAnimation() {
-            if (this.animationId) {
-                cancelAnimationFrame(this.animationId);
+        // ========== 全新物理摆球：端点固定重合，摆长、半径映射，速度因子符合延迟比例 ==========
+        class ElegantPendulum {
+            constructor(canvasId, data) {
+                this.canvas = document.getElementById(canvasId);
+                if (!this.canvas) return;
+                this.ctx = this.canvas.getContext('2d');
+                this.data = data;
+                this.pendulums = [];
                 this.animationId = null;
+                this.lastTimestamp = 0;
+                this.init();
+            }
+            init() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                this.createPendulums();
+                this.startAnimation();
+            }
+            resize() {
+                const container = this.canvas.parentElement;
+                if (!container) return;
+                const rect = container.getBoundingClientRect();
+                this.canvas.width = rect.width;
+                this.canvas.height = 520;
+                this.width = this.canvas.width;
+                this.height = this.canvas.height;
+                this.pivotX = this.width / 2;    // 所有摆线固定端点重合于此
+                this.pivotY = 70;
+                this.updatePositionsAfterResize();
+                this.draw();
+            }
+            updatePositionsAfterResize() {
+                if (!this.pendulums.length) return;
+                const count = this.pendulums.length;
+                const spacing = Math.min(140, (this.width - 100) / Math.max(1, count));
+                const startX = (this.width - spacing * (count - 1)) / 2;
+                this.pendulums.forEach((p, idx) => {
+                    p.anchorOffsetX = startX + idx * spacing - this.pivotX;
+                });
+            }
+            createPendulums() {
+                // 按照延迟排序，使布局错落有序
+                const sorted = [...this.data].sort((a,b) => b.avgDelaySec - a.avgDelaySec);
+                const count = sorted.length;
+                const spacing = Math.min(130, (window.innerWidth > 700 ? 120 : 80));
+                const startX = (this.width - spacing * (count - 1)) / 2;
+                const palette = ['#c4a484', '#8faa9e', '#d8bfa2', '#b7b39b', '#c5a27c'];
+                sorted.forEach((item, idx) => {
+                    const length = getPendulumLength(item.avgDelaySec);
+                    const radius = getRadius(item.totalWords);
+                    const speedFactor = getAngularSpeedFactor(item.avgDelaySec);
+                    // 初始角度微偏，产生自然摆动，并让延迟大的球摆动幅度稍小，速度比例由速度因子决定
+                    let initAngle = (idx % 2 === 0 ? 0.32 : -0.28) * (1 - (item.avgDelaySec - minDelay)/(maxDelay - minDelay) * 0.4);
+                    this.pendulums.push({
+                        name: item.name,
+                        delaySec: item.avgDelaySec,
+                        totalWords: item.totalWords,
+                        radius: radius,
+                        length: length,
+                        angle: initAngle,
+                        velocity: 0,
+                        anchorOffsetX: startX + idx * spacing - this.pivotX,
+                        color: palette[idx % palette.length],
+                        speedFactor: speedFactor,
+                        // 额外记录自然频率
+                        naturalOmega: Math.sqrt(9.8 / length)
+                    });
+                });
+            }
+            updatePhysics(deltaTime) {
+                const dt = Math.min(deltaTime / 1000, 0.028);
+                const g = 9.2;
+                const damping = 0.992;
+                for (let p of this.pendulums) {
+                    // 物理方程：角加速度 = - (g/L) * angle，再乘速度因子让延迟大的摆球更迟缓（象征阻力）
+                    let alpha = -(g / p.length) * p.angle;
+                    // 速度因子作用于加速度上，延迟越长速度因子越小 -> 摆动越慢
+                    alpha *= p.speedFactor;
+                    p.velocity += alpha * dt;
+                    p.velocity *= damping;
+                    p.angle += p.velocity * dt;
+                    const maxAngle = Math.PI / 2.3;
+                    if (p.angle > maxAngle) p.angle = maxAngle;
+                    if (p.angle < -maxAngle) p.angle = -maxAngle;
+                    // 轻微能量保持，为了使视觉更快响应，如果速度太小且角度小可轻微扰动
+                    if (Math.abs(p.velocity) < 0.03 && Math.abs(p.angle) < 0.08) {
+                        p.velocity += (Math.random() - 0.5) * 0.008;
+                    }
+                }
+            }
+            draw() {
+                if (!this.ctx || !this.width) return;
+                this.ctx.clearRect(0, 0, this.width, this.height);
+                // 柔和背景
+                this.ctx.fillStyle = '#fcf9f4';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+                // 绘制悬挂横梁（莫兰迪金属感）
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, this.pivotY - 4);
+                this.ctx.lineTo(this.width, this.pivotY - 4);
+                this.ctx.strokeStyle = '#ccbcab';
+                this.ctx.lineWidth = 6;
+                this.ctx.stroke();
+                this.ctx.beginPath();
+                this.ctx.arc(this.pivotX, this.pivotY, 10, 0, 2*Math.PI);
+                this.ctx.fillStyle = '#cfbeab';
+                this.ctx.shadowBlur = 0;
+                this.ctx.fill();
+                this.ctx.fillStyle = '#a78668';
+                this.ctx.beginPath();
+                this.ctx.arc(this.pivotX, this.pivotY, 5, 0, 2*Math.PI);
+                this.ctx.fill();
+
+                for (let p of this.pendulums) {
+                    const bobX = this.pivotX + p.anchorOffsetX + Math.sin(p.angle) * p.length;
+                    const bobY = this.pivotY + Math.cos(p.angle) * p.length;
+                    const lineStartX = this.pivotX + p.anchorOffsetX;
+                    const lineStartY = this.pivotY;
+                    // 摆线
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(lineStartX, lineStartY);
+                    this.ctx.lineTo(bobX, bobY);
+                    this.ctx.strokeStyle = '#cbb998';
+                    this.ctx.lineWidth = 2.8;
+                    this.ctx.stroke();
+                    // 球体阴影
+                    this.ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                    this.ctx.shadowBlur = 8;
+                    const grad = this.ctx.createRadialGradient(bobX-4, bobY-4, 3, bobX, bobY, p.radius);
+                    grad.addColorStop(0, p.color);
+                    grad.addColorStop(1, this.darkenColor(p.color));
+                    this.ctx.beginPath();
+                    this.ctx.arc(bobX, bobY, p.radius, 0, 2*Math.PI);
+                    this.ctx.fillStyle = grad;
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#fef3e6';
+                    this.ctx.lineWidth = 1.5;
+                    this.ctx.stroke();
+                    this.ctx.shadowBlur = 0;
+                    this.ctx.font = `600 ${Math.max(12, Math.min(18, p.radius/3.2))}px "Inter"`;
+                    this.ctx.fillStyle = '#4c3e2e';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText(p.name, bobX, bobY - p.radius - 8);
+                    this.ctx.font = '10px monospace';
+                    this.ctx.fillStyle = '#ab8d6e';
+                    const delayLabel = p.delaySec > 3600 ? `${(p.delaySec/3600).toFixed(1)}h` : `${p.delaySec.toFixed(0)}s`;
+                    this.ctx.fillText(`延迟 ${delayLabel}`, bobX, bobY + p.radius + 14);
+                }
+            }
+            darkenColor(color) {
+                return color; 
+            }
+            startAnimation() {
+                let lastTime = performance.now();
+                const animate = (now) => {
+                    let delta = now - lastTime;
+                    if (delta > 60) delta = 30;
+                    if (delta < 100) this.updatePhysics(delta);
+                    lastTime = now;
+                    this.draw();
+                    this.animationId = requestAnimationFrame(animate);
+                };
+                this.animationId = requestAnimationFrame(animate);
+            }
+            stopAnimation() {
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                    this.animationId = null;
+                }
             }
         }
-    }
 
-    function renderChart3(containerId) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-        container.innerHTML = `<canvas id="pendulumCanvas" style="width:100%; height:500px; display:block;"></canvas>`;
-        pendulumSim = new PendulumSimulator('pendulumCanvas', relationData);
-    }
+        function renderChart3(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = `<canvas id="pendulumCanvas" style="width:100%; height:520px; display:block; border-radius: 1.5rem;"></canvas>`;
+            pendulumSim = new ElegantPendulum('pendulumCanvas', relationData);
+        }
 
-    // 渲染详情页 - 关键修复：使用 setTimeout 确保 DOM 完全渲染后再初始化图表
-    function renderDetailChart(chartType) {
-        detailContent.innerHTML = `
-            <div class="chart-container-box">
-                <div class="chart-header">
-                    <div class="chart-title">${chartType === 'chart1' ? '📊 消息总量对比' : chartType === 'chart2' ? '⚖️ 对话天平' : '🎯 心理阻力摆球'}</div>
-                    <div class="chart-sub">${chartType === 'chart1' ? '横向权力对比，谁占据了你社交能量的大头？' : chartType === 'chart2' ? '我的字数 vs 对方字数，谁倾注了更多的语言？' : '摆线长度 = 回复延迟，球体大小 = 情感质量'}</div>
+        function renderDetailChart(chartType) {
+            detailContent.innerHTML = `
+                <div class="chart-container-box">
+                    <div class="chart-header">
+                        <div class="chart-title">${chartType === 'chart1' ? '📊 消息总量对比' : chartType === 'chart2' ? '⚖️ 对话天平' : '🎯 心理阻力摆球'}</div>
+                        <div class="chart-sub">${chartType === 'chart1' ? '横向权力对比，谁占据了你社交能量的大头？' : chartType === 'chart2' ? '我的字数 vs 对方字数，谁倾注了更多的语言？' : '摆线长度 = 回复延迟，球体大小 = 情感质量，速度反映心理阻力'}</div>
+                    </div>
+                    <div id="dynamicChart" class="chart-box"></div>
                 </div>
-                <div id="dynamicChart" class="chart-box"></div>
-            </div>
-        `;
-        
-        // 关键：延迟渲染，确保 DOM 元素已经添加到页面并可见
-        setTimeout(function() {
-            if (chartType === 'chart1') {
+            `;
+            setTimeout(() => {
                 if (currentChart && currentChart.dispose) currentChart.dispose();
-                currentChart = renderChart1('dynamicChart');
-            } else if (chartType === 'chart2') {
-                if (currentChart && currentChart.dispose) currentChart.dispose();
-                currentChart = renderChart2('dynamicChart');
-            } else if (chartType === 'chart3') {
-                if (currentChart && currentChart.dispose) currentChart.dispose();
-                renderChart3('dynamicChart');
-            }
-            
-            // 确保图表自适应窗口大小
-            window.dispatchEvent(new Event('resize'));
-        }, 100);
-    }
+                if (chartType === 'chart1') currentChart = renderChart1('dynamicChart');
+                else if (chartType === 'chart2') currentChart = renderChart2('dynamicChart');
+                else if (chartType === 'chart3') renderChart3('dynamicChart');
+                window.dispatchEvent(new Event('resize'));
+            }, 100);
+        }
 
-    // 事件绑定
-    if (startBtn) {
-        startBtn.addEventListener('click', function() {
-            showPage('explore');
+        // 事件绑定
+        if (startBtn) startBtn.onclick = () => showPage('explore');
+        if (backToHomeBtn) backToHomeBtn.onclick = () => showPage('home');
+        if (backToCardsBtn) backToCardsBtn.onclick = () => showPage('explore');
+        document.querySelectorAll('.insight-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const type = card.getAttribute('data-chart');
+                renderDetailChart(type);
+                showPage('detail');
+            });
         });
-    }
-    
-    if (backToHomeBtn) {
-        backToHomeBtn.addEventListener('click', function() {
-            showPage('home');
-        });
-    }
-    
-    if (backToCardsBtn) {
-        backToCardsBtn.addEventListener('click', function() {
-            showPage('explore');
-        });
-    }
-    
-    // 卡片点击
-    document.querySelectorAll('.insight-card').forEach(function(card) {
-        card.addEventListener('click', function() {
-            const chartType = this.getAttribute('data-chart');
-            renderDetailChart(chartType);
-            showPage('detail');
-        });
-    });
-
-    // 初始显示首页
-    showPage('home');
-    
-    console.log('✅ 页面已加载，数据:', relationData);
+        showPage('home');
+    })();
 </script>
 </body>
 </html>
