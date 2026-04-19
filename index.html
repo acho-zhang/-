@@ -110,7 +110,7 @@
         }
 
         .start-btn:hover {
-            background: #e5d6cd;
+            background: #c9b2a4;
             transform: translateY(-3px);
         }
 
@@ -221,21 +221,24 @@
         }
 
         .chart-sub {
-            color: #b59dbb;
+            color: #b5a0b0;
             font-size: 0.8rem;
         }
 
         .chart-box {
             width: 100%;
-            height: 480px;
+            height: 460px;
+            overflow: hidden;
+            border-radius: 1.2rem;
         }
 
+        /* 赛道画布 - 严格限制在卡片内 */
         .track-canvas {
             width: 100%;
-            height: 520px;
+            height: 100%;
+            display: block;
             background: #fefaf5;
-            border-radius: 1.8rem;
-            box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.03);
+            border-radius: 1.2rem;
         }
 
         .footer-note {
@@ -248,8 +251,7 @@
         @media (max-width: 700px) {
             .hero-title { font-size: 1.9rem; }
             .cards-grid { grid-template-columns: 1fr; }
-            .chart-box { height: 380px; }
-            .track-canvas { height: 560px; }
+            .chart-box { height: 480px; }
         }
     </style>
 </head>
@@ -376,12 +378,12 @@
             { name: "兄妹", totalWords: 147, myWords: 99, theirWords: 48, myRatio: 0.6735, avgDelaySec: 3600 }
         ];
 
-        // 球体半径映射 (差距小一点)
+        // 球体半径映射
         const minWords = Math.min(...relationData.map(d => d.totalWords));
         const maxWords = Math.max(...relationData.map(d => d.totalWords));
         function getRadius(words) {
-            const minR = 16, maxR = 34;
-            if (maxWords === minWords) return 25;
+            const minR = 18, maxR = 36;
+            if (maxWords === minWords) return 27;
             return minR + (words - minWords) / (maxWords - minWords) * (maxR - minR);
         }
 
@@ -390,12 +392,13 @@
         const maxDelay = Math.max(...delays);
         const minDelay = Math.min(...delays);
         function getSpeedPxPerFrame(delaySec) {
-            let speedVal = 1.0 / (delaySec / 80 + 0.015);
-            const maxRaw = 1.0 / (minDelay / 80 + 0.015);
-            const minRaw = 1.0 / (maxDelay / 80 + 0.015);
+            // 回复速度与延迟成反比
+            let speedVal = 1.0 / (delaySec / 70 + 0.012);
+            const maxRaw = 1.0 / (minDelay / 70 + 0.012);
+            const minRaw = 1.0 / (maxDelay / 70 + 0.012);
             const norm = (speedVal - minRaw) / (maxRaw - minRaw);
-            let finalSpeed = 0.9 + norm * 2.6;
-            return Math.min(3.3, Math.max(0.9, finalSpeed));
+            let finalSpeed = 0.8 + norm * 2.4;
+            return Math.min(3.0, Math.max(0.8, finalSpeed));
         }
 
         let trackAnimation = null;
@@ -434,7 +437,7 @@
                 yAxis: { type: 'value', name: '总字数 (字符)', nameTextStyle: { color: '#9a88a3' } },
                 series: [{
                     type: 'bar', data: relationData.map(d => d.totalWords),
-                    itemStyle: { borderRadius: [10,10,0,0], color: '#c7c1cb', label: { show: true, position: 'top', fontWeight: 'bold', color: '#7a6392' } }
+                    itemStyle: { borderRadius: [10,10,0,0], color: '#c4a5cf', label: { show: true, position: 'top', fontWeight: 'bold', color: '#7a6392' } }
                 }]
             });
             return chart;
@@ -458,14 +461,14 @@
                 yAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontWeight: 500, color: '#7a6a85' } },
                 legend: { data: ['我 ', '对方 '], left: 'left', textStyle: { color: '#9b89a3' } },
                 series: [
-                    { name: '我 ', type: 'bar', stack: 'total', data: myPercent, itemStyle: { color: '#dcb5c5', borderRadius: [0, 6, 6, 0], label: { show: true, position: 'right', formatter: p => p.value.toFixed(1)+'%' } } },
+                    { name: '我 ', type: 'bar', stack: 'total', data: myPercent, itemStyle: { color: '#e1b7c7', borderRadius: [0, 6, 6, 0], label: { show: true, position: 'right', formatter: p => p.value.toFixed(1)+'%' } } },
                     { name: '对方 ', type: 'bar', stack: 'total', data: theirPercent, itemStyle: { color: '#a7b9cd', borderRadius: [6, 0, 0, 6], label: { show: true, position: 'left', formatter: p => p.value.toFixed(1)+'%' } } }
                 ]
             });
             return chart;
         }
 
-        // ========== 赛道往返动画 - 五条独立赛道，依次排开 ==========
+        // ========== 赛道往返动画 - 五条独立赛道，依次排开，完全适配容器 ==========
         class TrackRacer {
             constructor(canvasId, data) {
                 this.canvas = document.getElementById(canvasId);
@@ -487,14 +490,13 @@
                 if (!container) return;
                 const rect = container.getBoundingClientRect();
                 this.canvas.width = rect.width;
-                this.canvas.height = 540;
+                this.canvas.height = rect.height;
                 this.width = this.canvas.width;
                 this.height = this.canvas.height;
                 this.updateTrackPositions();
                 this.draw();
             }
             buildTracks() {
-                // 按原始顺序显示（恋人、朋友、母女、师生、兄妹），也可按延迟排序，但清晰排开即可
                 const order = [...this.data];
                 const palette = ['#c49c99', '#d1b7b8', '#c7c1cb', '#dbcbc2', '#e8ddd8'];
                 
@@ -510,9 +512,8 @@
                         direction: 1,
                         posX: 0,
                         y: 0,
-                        startX: 70,
+                        startX: 85,
                         endX: 0,
-                        trackHeight: 0,
                         color: palette[idx % palette.length],
                         labelColor: '#6d5c7c'
                     };
@@ -520,8 +521,8 @@
             }
             updateTrackPositions() {
                 const trackCount = this.tracks.length;
-                const topMargin = 55;
-                const bottomMargin = 45;
+                const topMargin = 50;
+                const bottomMargin = 40;
                 const availableHeight = this.height - topMargin - bottomMargin;
                 const trackHeight = availableHeight / trackCount;
                 
@@ -529,21 +530,19 @@
                     const t = this.tracks[i];
                     const centerY = topMargin + i * trackHeight + trackHeight / 2;
                     t.y = centerY;
-                    t.trackHeight = trackHeight * 0.6;
-                    t.startX = 70;
-                    t.endX = this.width - 70;
+                    t.startX = 85;
+                    t.endX = this.width - 85;
                     const range = t.endX - t.startX;
-                    t.range = range;
                     
                     if (t.posX === 0 || isNaN(t.posX)) {
-                        t.posX = t.startX + range * 0.3;
+                        t.posX = t.startX + range * 0.35;
                     }
                     if (t.posX < t.startX) t.posX = t.startX;
                     if (t.posX > t.endX) t.posX = t.endX;
                 }
             }
             draw() {
-                if (!this.ctx || !this.width) return;
+                if (!this.ctx || !this.width || !this.height) return;
                 this.ctx.clearRect(0, 0, this.width, this.height);
                 this.ctx.fillStyle = '#fefaf5';
                 this.ctx.fillRect(0, 0, this.width, this.height);
@@ -560,11 +559,12 @@
                     this.ctx.stroke();
                     this.ctx.setLineDash([]);
                     
-                    // 起点/终点装饰
+                    // 起点装饰
                     this.ctx.beginPath();
                     this.ctx.arc(t.startX, lineY, 7, 0, 2 * Math.PI);
                     this.ctx.fillStyle = '#e7dbcf';
                     this.ctx.fill();
+                    // 终点装饰
                     this.ctx.beginPath();
                     this.ctx.arc(t.endX, lineY, 7, 0, 2 * Math.PI);
                     this.ctx.fill();
@@ -575,10 +575,18 @@
                     this.ctx.fillText(t.name, 12, lineY + 5);
                     
                     // 右侧延迟信息
-                    const delayText = t.delaySec > 3600 ? `${(t.delaySec/3600).toFixed(1)}h` : `${t.delaySec.toFixed(0)}s`;
+                    let delayText;
+                    if (t.delaySec >= 3600) {
+                        delayText = `${(t.delaySec/3600).toFixed(1)}h`;
+                    } else if (t.delaySec >= 60) {
+                        delayText = `${(t.delaySec/60).toFixed(0)}min`;
+                    } else {
+                        delayText = `${t.delaySec.toFixed(0)}s`;
+                    }
                     this.ctx.font = `11px monospace`;
                     this.ctx.fillStyle = '#aa9bae';
-                    this.ctx.fillText(`回复延迟 ${delayText}`, this.width - 95, lineY + 5);
+                    const rightText = `回复延迟 ${delayText}`;
+                    this.ctx.fillText(rightText, this.width - this.ctx.measureText(rightText).width - 12, lineY + 5);
                     
                     // 小球
                     const x = t.posX;
@@ -599,7 +607,7 @@
                     
                     // 小球内显示字数
                     this.ctx.font = `${Math.max(9, Math.min(12, radius/3.2))}px "Inter"`;
-                    this.ctx.fillStyle = '#fef7e8';
+                    this.ctx.fillStyle = '#ffffff';
                     this.ctx.fillText(`${t.totalWords}`, x-4, lineY+4);
                 }
             }
@@ -642,8 +650,11 @@
         function renderChart3(containerId) {
             const container = document.getElementById(containerId);
             if (!container) return;
-            container.innerHTML = `<canvas id="trackCanvas" class="track-canvas" style="width:100%; height:540px; display:block;"></canvas>`;
-            trackAnimation = new TrackRacer('trackCanvas', relationData);
+            // 创建固定高度的canvas容器
+            container.innerHTML = `<canvas id="trackCanvas" class="track-canvas" style="width:100%; height:100%; display:block;"></canvas>`;
+            setTimeout(() => {
+                trackAnimation = new TrackRacer('trackCanvas', relationData);
+            }, 20);
         }
 
         function renderDetailChart(chartType) {
@@ -658,11 +669,15 @@
             `;
             setTimeout(() => {
                 if (currentChart && currentChart.dispose) currentChart.dispose();
-                if (chartType === 'chart1') currentChart = renderChart1('dynamicChart');
-                else if (chartType === 'chart2') currentChart = renderChart2('dynamicChart');
-                else if (chartType === 'chart3') renderChart3('dynamicChart');
+                if (chartType === 'chart1') {
+                    currentChart = renderChart1('dynamicChart');
+                } else if (chartType === 'chart2') {
+                    currentChart = renderChart2('dynamicChart');
+                } else if (chartType === 'chart3') {
+                    renderChart3('dynamicChart');
+                }
                 window.dispatchEvent(new Event('resize'));
-            }, 80);
+            }, 100);
         }
 
         if (startBtn) startBtn.onclick = () => showPage('explore');
