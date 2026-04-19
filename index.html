@@ -280,7 +280,7 @@
             <div class="insight-card" data-chart="chart3">
                 <div class="card-icon">🎯</div>
                 <div class="card-title">心理阻力摆球</div>
-                <div class="card-desc">谁的消息你总是“秒回”，谁的消息又常常“石沉大海”？<br>摆线长度 = 回复延迟，球体大小 = 情感质量</div>
+                <div class="card-desc">谁的消息你总是"秒回"，谁的消息又常常"石沉大海"？<br>摆线长度 = 回复延迟，球体大小 = 情感质量</div>
                 <div class="card-tag">点击查看物理摆球动画 →</div>
             </div>
         </div>
@@ -298,367 +298,367 @@
 </div>
 
 <script>
-    // ======================== 数据定义 ========================
-    const relationData = [
-        { name: "恋人", totalWords: 8475, myWords: 3759, theirWords: 4716, myRatio: 0.4435, avgDelaySec: 776.35 },
-        { name: "朋友", totalWords: 846, myWords: 147, theirWords: 699, myRatio: 0.1738, avgDelaySec: 12585 },
-        { name: "母女", totalWords: 775, myWords: 373, theirWords: 402, myRatio: 0.4813, avgDelaySec: 940 },
-        { name: "师生", totalWords: 631, myWords: 246, theirWords: 385, myRatio: 0.3899, avgDelaySec: 2201.54 },
-        { name: "兄妹", totalWords: 147, myWords: 99, theirWords: 48, myRatio: 0.6735, avgDelaySec: 3600 }
-    ];
+    (function() {
+        // ======================== 数据定义 ========================
+        const relationData = [
+            { name: "恋人", totalWords: 8475, myWords: 3759, theirWords: 4716, myRatio: 0.4435, avgDelaySec: 776.35 },
+            { name: "朋友", totalWords: 846, myWords: 147, theirWords: 699, myRatio: 0.1738, avgDelaySec: 12585 },
+            { name: "母女", totalWords: 775, myWords: 373, theirWords: 402, myRatio: 0.4813, avgDelaySec: 940 },
+            { name: "师生", totalWords: 631, myWords: 246, theirWords: 385, myRatio: 0.3899, avgDelaySec: 2201.54 },
+            { name: "兄妹", totalWords: 147, myWords: 99, theirWords: 48, myRatio: 0.6735, avgDelaySec: 3600 }
+        ];
 
-    // 计算球体半径映射 (总字数 -> 半径 15~55px)
-    const minWords = Math.min(...relationData.map(d => d.totalWords));
-    const maxWords = Math.max(...relationData.map(d => d.totalWords));
-    function getRadius(words) {
-        const minR = 15, maxR = 55;
-        if (maxWords === minWords) return 35;
-        return minR + (words - minWords) / (maxWords - minWords) * (maxR - minR);
-    }
+        // 计算球体半径映射
+        const minWords = Math.min(...relationData.map(d => d.totalWords));
+        const maxWords = Math.max(...relationData.map(d => d.totalWords));
+        function getRadius(words) {
+            const minR = 15, maxR = 55;
+            if (maxWords === minWords) return 35;
+            return minR + (words - minWords) / (maxWords - minWords) * (maxR - minR);
+        }
 
-    // 计算摆线长度映射 (延迟 -> 摆长，单位像素，范围 60~280px)
-    const minDelay = Math.min(...relationData.map(d => d.avgDelaySec));
-    const maxDelay = Math.max(...relationData.map(d => d.avgDelaySec));
-    function getPendulumLength(delaySec) {
-        const minLen = 70, maxLen = 280;
-        if (maxDelay === minDelay) return 150;
-        return minLen + (delaySec - minDelay) / (maxDelay - minDelay) * (maxLen - minLen);
-    }
+        // 计算摆线长度映射
+        const minDelay = Math.min(...relationData.map(d => d.avgDelaySec));
+        const maxDelay = Math.max(...relationData.map(d => d.avgDelaySec));
+        function getPendulumLength(delaySec) {
+            const minLen = 70, maxLen = 280;
+            if (maxDelay === minDelay) return 150;
+            return minLen + (delaySec - minDelay) / (maxDelay - minDelay) * (maxLen - minLen);
+        }
 
-    // 存储当前摆球动画实例
-    let pendulumAnimationId = null;
-    let pendulumCtx = null;
-    let pendulumWidth = 0, pendulumHeight = 0;
+        // 存储当前摆球动画实例
+        let pendulumSim = null;
+        let currentEChart = null;
 
-    // ======================== 图表1：消息总量柱状图 ========================
-    function renderChart1(containerId) {
-        const dom = document.getElementById(containerId);
-        if (!dom) return;
-        const chart = echarts.init(dom);
-        chart.setOption({
-            tooltip: { trigger: 'axis', formatter: p => `<strong>${p[0].name}</strong><br/>📨 总字数: ${p[0].value} 字` },
-            grid: { left: '8%', right: '5%', top: '10%', bottom: '5%', containLabel: true },
-            xAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontSize: 13, fontWeight: 500 } },
-            yAxis: { type: 'value', name: '总字数 (字符)' },
-            series: [{
-                type: 'bar', data: relationData.map(d => d.totalWords),
-                itemStyle: { borderRadius: [8,8,0,0], color: '#e67e22', label: { show: true, position: 'top', fontWeight: 'bold' } }
-            }]
-        });
-        return chart;
-    }
+        // ============== 获取DOM元素 ==============
+        const homePage = document.getElementById('homePage');
+        const explorePage = document.getElementById('explorePage');
+        const detailPage = document.getElementById('detailPage');
+        const detailContent = document.getElementById('detailContent');
+        const startBtn = document.getElementById('startBtn');
+        const backToHomeBtn = document.getElementById('backToHomeBtn');
+        const backToCardsBtn = document.getElementById('backToCardsBtn');
 
-    // ======================== 图表2：横向百分比堆叠柱状图（五根柱子等长，仅体现占比） ========================
-    function renderChart2(containerId) {
-        const dom = document.getElementById(containerId);
-        if (!dom) return;
-        const chart = echarts.init(dom);
-        
-        // 为每个关系构建 100% 的堆叠数据
-        const myPercent = relationData.map(d => d.myRatio * 100);
-        const theirPercent = relationData.map(d => (1 - d.myRatio) * 100);
-        
-        chart.setOption({
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: { type: 'shadow' },
-                formatter: function(params) {
-                    const idx = params[0].dataIndex;
-                    const data = relationData[idx];
-                    return `<strong>${data.name}</strong><br/>
-                    📝 我: ${data.myWords} 字 (${data.myRatio * 100}%)<br/>
-                    👥 对方: ${data.theirWords} 字 (${(1-data.myRatio)*100}%)`;
-                }
-            },
-            grid: { left: '12%', right: '8%', top: '10%, bottom: '8%', containLabel: true },
-            xAxis: { type: 'value', name: '字数占比 (%)', max: 100, axisLabel: { formatter: '{value}%' } },
-            yAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontSize: 13, fontWeight: 500 } },
-            legend: { data: ['我 (主动倾注)', '对方 (回应/主导)'], left: 'left', itemWidth: 30 },
-            series: [
-                {
-                    name: '我 (主动倾注)', type: 'bar', stack: 'total', data: myPercent,
-                    itemStyle: { color: '#3498db', borderRadius: [0, 4, 4, 0], label: { show: true, position: 'right', formatter: p => `${p.value.toFixed(1)}%` } }
+        // ============== 页面切换函数 ==============
+        function showPage(pageName) {
+            // 停止摆球动画
+            if (pendulumSim) {
+                if (pendulumSim.stopAnimation) pendulumSim.stopAnimation();
+                pendulumSim = null;
+            }
+            // 销毁 ECharts 实例
+            if (currentEChart && currentEChart.dispose) {
+                currentEChart.dispose();
+                currentEChart = null;
+            }
+            
+            homePage.style.display = 'none';
+            explorePage.style.display = 'none';
+            detailPage.style.display = 'none';
+            
+            if (pageName === 'home') {
+                homePage.style.display = 'flex';
+            } else if (pageName === 'explore') {
+                explorePage.style.display = 'block';
+            } else if (pageName === 'detail') {
+                detailPage.style.display = 'block';
+            }
+        }
+
+        // ============== 图表1：消息总量柱状图 ==============
+        function renderChart1(containerId) {
+            const dom = document.getElementById(containerId);
+            if (!dom) return null;
+            const chart = echarts.init(dom);
+            chart.setOption({
+                tooltip: { trigger: 'axis', formatter: function(p) {
+                    return `<strong>${p[0].name}</strong><br/>📨 总字数: ${p[0].value} 字`;
+                }},
+                grid: { left: '8%', right: '5%', top: '10%', bottom: '5%', containLabel: true },
+                xAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontSize: 13, fontWeight: 500 } },
+                yAxis: { type: 'value', name: '总字数 (字符)' },
+                series: [{
+                    type: 'bar', data: relationData.map(d => d.totalWords),
+                    itemStyle: { borderRadius: [8,8,0,0], color: '#e67e22', label: { show: true, position: 'top', fontWeight: 'bold' } }
+                }]
+            });
+            return chart;
+        }
+
+        // ============== 图表2：横向百分比堆叠柱状图 ==============
+        function renderChart2(containerId) {
+            const dom = document.getElementById(containerId);
+            if (!dom) return null;
+            const chart = echarts.init(dom);
+            
+            const myPercent = relationData.map(d => d.myRatio * 100);
+            const theirPercent = relationData.map(d => (1 - d.myRatio) * 100);
+            
+            chart.setOption({
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { type: 'shadow' },
+                    formatter: function(params) {
+                        const idx = params[0].dataIndex;
+                        const data = relationData[idx];
+                        return `<strong>${data.name}</strong><br/>
+                        📝 我: ${data.myWords} 字 (${(data.myRatio * 100).toFixed(1)}%)<br/>
+                        👥 对方: ${data.theirWords} 字 (${((1-data.myRatio) * 100).toFixed(1)}%)`;
+                    }
                 },
-                {
-                    name: '对方 (回应/主导)', type: 'bar', stack: 'total', data: theirPercent,
-                    itemStyle: { color: '#e67e22', borderRadius: [4, 0, 0, 4], label: { show: true, position: 'left', formatter: p => `${p.value.toFixed(1)}%` } }
-                }
-            ]
-        });
-        return chart;
-    }
-
-    // ======================== 图表3：物理摆球动画 ========================
-    class PendulumSimulator {
-        constructor(canvasId, data) {
-            this.canvas = document.getElementById(canvasId);
-            if (!this.canvas) return;
-            this.ctx = this.canvas.getContext('2d');
-            this.data = data;
-            this.pendulums = [];
-            this.animationId = null;
-            this.lastTimestamp = 0;
-            this.init();
-        }
-
-        init() {
-            this.resize();
-            window.addEventListener('resize', () => this.resize());
-            this.createPendulums();
-            this.startAnimation();
-        }
-
-        resize() {
-            const container = this.canvas.parentElement;
-            const rect = container.getBoundingClientRect();
-            this.canvas.width = rect.width;
-            this.canvas.height = 500;
-            this.width = this.canvas.width;
-            this.height = this.canvas.height;
-            this.pivotX = this.width / 2;      // 所有摆球的公共悬挂点（中点）
-            this.pivotY = 80;                   // 悬挂点Y坐标
-            this.updatePendulumPositions();
-            this.draw();
-        }
-
-        createPendulums() {
-            // 根据数据创建摆球，按延迟排序（长的靠外，避免重叠）
-            const sorted = [...this.data].sort((a,b) => b.avgDelaySec - a.avgDelaySec);
-            const count = sorted.length;
-            const spacing = Math.min(140, this.width / (count + 1));
-            const startX = (this.width - spacing * (count - 1)) / 2;
-            
-            sorted.forEach((item, idx) => {
-                const length = getPendulumLength(item.avgDelaySec);
-                const radius = getRadius(item.totalWords);
-                // 每个摆球在x轴上的锚点偏移，使它们错开但共享同一个悬挂点Y
-                const anchorOffsetX = startX + idx * spacing - this.pivotX;
-                this.pendulums.push({
-                    name: item.name,
-                    delaySec: item.avgDelaySec,
-                    totalWords: item.totalWords,
-                    radius: radius,
-                    length: length,
-                    angle: 0,           // 初始角度0
-                    velocity: 0,
-                    anchorOffsetX: anchorOffsetX,  // 相对于 pivotX 的偏移
-                    color: this.getColor(idx)
-                });
+                grid: { left: '12%', right: '8%', top: '10%', bottom: '8%', containLabel: true },
+                xAxis: { type: 'value', name: '字数占比 (%)', max: 100, axisLabel: { formatter: '{value}%' } },
+                yAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontSize: 13, fontWeight: 500 } },
+                legend: { data: ['我 (主动倾注)', '对方 (回应/主导)'], left: 'left', itemWidth: 30 },
+                series: [
+                    {
+                        name: '我 (主动倾注)', type: 'bar', stack: 'total', data: myPercent,
+                        itemStyle: { color: '#3498db', borderRadius: [0, 4, 4, 0], label: { show: true, position: 'right', formatter: function(p) { return p.value.toFixed(1) + '%'; } } }
+                    },
+                    {
+                        name: '对方 (回应/主导)', type: 'bar', stack: 'total', data: theirPercent,
+                        itemStyle: { color: '#e67e22', borderRadius: [4, 0, 0, 4], label: { show: true, position: 'left', formatter: function(p) { return p.value.toFixed(1) + '%'; } } }
+                    }
+                ]
             });
+            return chart;
         }
 
-        getColor(idx) {
-            const colors = ['#e67e22', '#2c3e50', '#16a085', '#c0392b', '#2980b9'];
-            return colors[idx % colors.length];
-        }
-
-        updatePendulumPositions() {
-            // 更新每个摆球的物理位置（基于物理方程，但初始角度为0，需要外力触发摆动）
-            // 为了让摆动更生动，给每个摆球一个随机的初始小角度偏移
-            if (this.pendulums.length > 0 && this.pendulums[0].angle === 0) {
-                this.pendulums.forEach((p, i) => {
-                    // 初始角度: 不同摆球不同偏移，产生优雅的摆动效果
-                    p.angle = (Math.sin(i) * 0.4) * (p.delaySec / maxDelay) * 0.8;
-                    p.velocity = 0;
-                });
-            }
-        }
-
-        updatePhysics(deltaTime) {
-            const dt = Math.min(deltaTime / 1000, 0.032); // 限制最大时间步长
-            const g = 9.8;      // 重力加速度
-            const damping = 0.995; // 阻尼系数
-            
-            this.pendulums.forEach(p => {
-                // 单摆运动方程: angular acceleration = - (g / L) * angle
-                const alpha = -(g / p.length) * p.angle;
-                p.velocity += alpha * dt;
-                p.velocity *= damping;
-                p.angle += p.velocity * dt;
-                // 限制最大摆角
-                if (p.angle > Math.PI / 2.5) p.angle = Math.PI / 2.5;
-                if (p.angle < -Math.PI / 2.5) p.angle = -Math.PI / 2.5;
-            });
-        }
-
-        draw() {
-            if (!this.ctx) return;
-            this.ctx.clearRect(0, 0, this.width, this.height);
-            
-            // 绘制天花板横梁
-            this.ctx.beginPath();
-            this.ctx.moveTo(0, this.pivotY - 5);
-            this.ctx.lineTo(this.width, this.pivotY - 5);
-            this.ctx.strokeStyle = '#b0a088';
-            this.ctx.lineWidth = 4;
-            this.ctx.stroke();
-            
-            // 绘制悬挂点圆环
-            this.ctx.beginPath();
-            this.ctx.arc(this.pivotX, this.pivotY, 8, 0, 2 * Math.PI);
-            this.ctx.fillStyle = '#c9b696';
-            this.ctx.shadowBlur = 0;
-            this.ctx.fill();
-            this.ctx.fillStyle = '#a67c52';
-            this.ctx.arc(this.pivotX, this.pivotY, 4, 0, 2 * Math.PI);
-            this.ctx.fill();
-            
-            // 绘制每个摆球
-            this.pendulums.forEach(p => {
-                // 计算摆锤位置
-                const bobX = this.pivotX + p.anchorOffsetX + Math.sin(p.angle) * p.length;
-                const bobY = this.pivotY + Math.cos(p.angle) * p.length;
-                
-                // 绘制摆线
-                const lineStartX = this.pivotX + p.anchorOffsetX;
-                const lineStartY = this.pivotY;
-                this.ctx.beginPath();
-                this.ctx.moveTo(lineStartX, lineStartY);
-                this.ctx.lineTo(bobX, bobY);
-                this.ctx.strokeStyle = '#c0a080';
-                this.ctx.lineWidth = 2.5;
-                this.ctx.stroke();
-                
-                // 绘制球体阴影
-                this.ctx.shadowColor = 'rgba(0,0,0,0.2)';
-                this.ctx.shadowBlur = 8;
-                // 绘制渐变球体
-                const grad = this.ctx.createRadialGradient(bobX - 5, bobY - 5, 3, bobX, bobY, p.radius);
-                grad.addColorStop(0, p.color);
-                grad.addColorStop(1, this.darkenColor(p.color));
-                this.ctx.beginPath();
-                this.ctx.arc(bobX, bobY, p.radius, 0, 2 * Math.PI);
-                this.ctx.fillStyle = grad;
-                this.ctx.fill();
-                this.ctx.strokeStyle = 'white';
-                this.ctx.lineWidth = 1.5;
-                this.ctx.stroke();
-                
-                // 绘制文字标签
-                this.ctx.shadowBlur = 0;
-                this.ctx.font = `bold ${Math.max(12, Math.min(16, p.radius / 3))}px "Segoe UI"`;
-                this.ctx.fillStyle = '#2c3e50';
-                this.ctx.textAlign = 'center';
-                this.ctx.fillText(p.name, bobX, bobY - p.radius - 8);
-                
-                // 可选：延迟数值小提示
-                this.ctx.font = '10px monospace';
-                this.ctx.fillStyle = '#8a6e4b';
-                const delayText = p.delaySec > 3600 ? `${(p.delaySec/3600).toFixed(1)}h` : `${p.delaySec.toFixed(0)}s`;
-                this.ctx.fillText(`延迟: ${delayText}`, bobX, bobY + p.radius + 12);
-            });
-        }
-
-        darkenColor(color) {
-            // 简单变暗
-            return color;
-        }
-
-        startAnimation() {
-            let lastTime = performance.now();
-            const animate = (now) => {
-                const delta = now - lastTime;
-                if (delta < 100) {
-                    this.updatePhysics(delta);
-                }
-                lastTime = now;
-                this.draw();
-                this.animationId = requestAnimationFrame(animate);
-            };
-            this.animationId = requestAnimationFrame(animate);
-        }
-
-        stopAnimation() {
-            if (this.animationId) {
-                cancelAnimationFrame(this.animationId);
+        // ============== 图表3：物理摆球动画 ==============
+        class PendulumSimulator {
+            constructor(canvasId, data) {
+                this.canvas = document.getElementById(canvasId);
+                if (!this.canvas) return;
+                this.ctx = this.canvas.getContext('2d');
+                this.data = data;
+                this.pendulums = [];
                 this.animationId = null;
+                this.lastTimestamp = 0;
+                this.init();
+            }
+
+            init() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                this.createPendulums();
+                this.startAnimation();
+            }
+
+            resize() {
+                const container = this.canvas.parentElement;
+                if (!container) return;
+                const rect = container.getBoundingClientRect();
+                this.canvas.width = rect.width;
+                this.canvas.height = 500;
+                this.width = this.canvas.width;
+                this.height = this.canvas.height;
+                this.pivotX = this.width / 2;
+                this.pivotY = 80;
+                this.updatePendulumPositions();
+                this.draw();
+            }
+
+            createPendulums() {
+                const sorted = [...this.data].sort((a, b) => b.avgDelaySec - a.avgDelaySec);
+                const count = sorted.length;
+                const spacing = Math.min(130, this.width / (count + 1));
+                const startX = (this.width - spacing * (count - 1)) / 2;
+                
+                sorted.forEach((item, idx) => {
+                    const length = getPendulumLength(item.avgDelaySec);
+                    const radius = getRadius(item.totalWords);
+                    const anchorOffsetX = startX + idx * spacing - this.pivotX;
+                    this.pendulums.push({
+                        name: item.name,
+                        delaySec: item.avgDelaySec,
+                        totalWords: item.totalWords,
+                        radius: radius,
+                        length: length,
+                        angle: Math.sin(idx) * 0.35,
+                        velocity: 0,
+                        anchorOffsetX: anchorOffsetX,
+                        color: this.getColor(idx)
+                    });
+                });
+            }
+
+            getColor(idx) {
+                const colors = ['#e67e22', '#2c3e50', '#16a085', '#c0392b', '#2980b9'];
+                return colors[idx % colors.length];
+            }
+
+            updatePendulumPositions() {}
+
+            updatePhysics(deltaTime) {
+                const dt = Math.min(deltaTime / 1000, 0.032);
+                const g = 9.8;
+                const damping = 0.995;
+                
+                this.pendulums.forEach(p => {
+                    const alpha = -(g / p.length) * p.angle;
+                    p.velocity += alpha * dt;
+                    p.velocity *= damping;
+                    p.angle += p.velocity * dt;
+                    if (p.angle > Math.PI / 2.5) p.angle = Math.PI / 2.5;
+                    if (p.angle < -Math.PI / 2.5) p.angle = -Math.PI / 2.5;
+                });
+            }
+
+            draw() {
+                if (!this.ctx || !this.width) return;
+                this.ctx.clearRect(0, 0, this.width, this.height);
+                
+                // 横梁
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, this.pivotY - 5);
+                this.ctx.lineTo(this.width, this.pivotY - 5);
+                this.ctx.strokeStyle = '#b0a088';
+                this.ctx.lineWidth = 4;
+                this.ctx.stroke();
+                
+                // 悬挂点
+                this.ctx.beginPath();
+                this.ctx.arc(this.pivotX, this.pivotY, 8, 0, 2 * Math.PI);
+                this.ctx.fillStyle = '#c9b696';
+                this.ctx.fill();
+                this.ctx.fillStyle = '#a67c52';
+                this.ctx.beginPath();
+                this.ctx.arc(this.pivotX, this.pivotY, 4, 0, 2 * Math.PI);
+                this.ctx.fill();
+                
+                // 绘制每个摆球
+                this.pendulums.forEach(p => {
+                    const bobX = this.pivotX + p.anchorOffsetX + Math.sin(p.angle) * p.length;
+                    const bobY = this.pivotY + Math.cos(p.angle) * p.length;
+                    const lineStartX = this.pivotX + p.anchorOffsetX;
+                    const lineStartY = this.pivotY;
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(lineStartX, lineStartY);
+                    this.ctx.lineTo(bobX, bobY);
+                    this.ctx.strokeStyle = '#c0a080';
+                    this.ctx.lineWidth = 2.5;
+                    this.ctx.stroke();
+                    
+                    this.ctx.shadowColor = 'rgba(0,0,0,0.2)';
+                    this.ctx.shadowBlur = 8;
+                    this.ctx.beginPath();
+                    this.ctx.arc(bobX, bobY, p.radius, 0, 2 * Math.PI);
+                    this.ctx.fillStyle = p.color;
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = 'white';
+                    this.ctx.lineWidth = 1.5;
+                    this.ctx.stroke();
+                    
+                    this.ctx.shadowBlur = 0;
+                    this.ctx.font = `bold ${Math.max(12, Math.min(16, p.radius / 3))}px "Segoe UI"`;
+                    this.ctx.fillStyle = '#2c3e50';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText(p.name, bobX, bobY - p.radius - 8);
+                    
+                    this.ctx.font = '10px monospace';
+                    this.ctx.fillStyle = '#8a6e4b';
+                    const delayText = p.delaySec > 3600 ? `${(p.delaySec/3600).toFixed(1)}h` : `${p.delaySec.toFixed(0)}s`;
+                    this.ctx.fillText(`延迟: ${delayText}`, bobX, bobY + p.radius + 12);
+                });
+            }
+
+            startAnimation() {
+                let lastTime = performance.now();
+                const animate = (now) => {
+                    const delta = now - lastTime;
+                    if (delta < 100) {
+                        this.updatePhysics(delta);
+                    }
+                    lastTime = now;
+                    this.draw();
+                    this.animationId = requestAnimationFrame(animate);
+                };
+                this.animationId = requestAnimationFrame(animate);
+            }
+
+            stopAnimation() {
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                    this.animationId = null;
+                }
             }
         }
 
-        destroy() {
-            this.stopAnimation();
+        function renderChart3(containerId) {
+            // 创建 canvas 元素
+            const container = document.getElementById(containerId);
+            if (!container) return null;
+            container.innerHTML = `<canvas id="pendulumCanvas" style="width:100%; height:500px; display:block;"></canvas>`;
+            const canvas = document.getElementById('pendulumCanvas');
+            if (!canvas) return null;
+            pendulumSim = new PendulumSimulator('pendulumCanvas', relationData);
+            return pendulumSim;
         }
-    }
 
-    let pendulumSim = null;
-
-    function renderChart3(containerId) {
-        if (pendulumSim) {
-            pendulumSim.destroy();
-            pendulumSim = null;
-        }
-        pendulumSim = new PendulumSimulator(containerId, relationData);
-        return pendulumSim;
-    }
-
-    // ======================== 页面路由逻辑 ========================
-    const homePage = document.getElementById('homePage');
-    const explorePage = document.getElementById('explorePage');
-    const detailPage = document.getElementById('detailPage');
-    const detailContent = document.getElementById('detailContent');
-    
-    let currentChart = null;
-    let currentEChart = null;
-
-    function showPage(pageName) {
-        homePage.style.display = 'none';
-        explorePage.style.display = 'none';
-        detailPage.style.display = 'none';
-        if (pageName === 'home') homePage.style.display = 'flex';
-        if (pageName === 'explore') explorePage.style.display = 'block';
-        if (pageName === 'detail') detailPage.style.display = 'block';
-    }
-
-    function renderDetailChart(chartType) {
-        detailContent.innerHTML = `
-            <div class="chart-container-box">
-                <div class="chart-header">
-                    <div class="chart-title">${chartType === 'chart1' ? '📊 消息总量对比' : chartType === 'chart2' ? '⚖️ 对话天平' : '🎯 心理阻力摆球'}</div>
-                    <div class="chart-sub">${chartType === 'chart1' ? '横向权力对比，谁占据了你社交能量的大头？' : chartType === 'chart2' ? '我的字数 vs 对方字数，谁倾注了更多的语言？' : '摆线长度 = 回复延迟，球体大小 = 情感质量'}</div>
+        // ============== 渲染详情页 ==============
+        function renderDetailChart(chartType) {
+            detailContent.innerHTML = `
+                <div class="chart-container-box">
+                    <div class="chart-header">
+                        <div class="chart-title">${chartType === 'chart1' ? '📊 消息总量对比' : chartType === 'chart2' ? '⚖️ 对话天平' : '🎯 心理阻力摆球'}</div>
+                        <div class="chart-sub">${chartType === 'chart1' ? '横向权力对比，谁占据了你社交能量的大头？' : chartType === 'chart2' ? '我的字数 vs 对方字数，谁倾注了更多的语言？' : '摆线长度 = 回复延迟，球体大小 = 情感质量'}</div>
+                    </div>
+                    <div id="dynamicChart" class="chart-box" style="${chartType === 'chart3' ? 'padding:0; background:#fefcf7; border-radius:1.5rem;' : ''}"></div>
                 </div>
-                <div id="dynamicChart" class="chart-box" style="${chartType === 'chart3' ? 'padding:0; background:#fefcf7; border-radius:1.5rem;' : ''}"></div>
-            </div>
-        `;
-        const container = document.getElementById('dynamicChart');
-        if (chartType === 'chart1') {
-            if (currentEChart && currentEChart.dispose) currentEChart.dispose();
-            currentEChart = renderChart1('dynamicChart');
-        } else if (chartType === 'chart2') {
-            if (currentEChart && currentEChart.dispose) currentEChart.dispose();
-            currentEChart = renderChart2('dynamicChart');
-        } else if (chartType === 'chart3') {
-            if (currentEChart && currentEChart.dispose) currentEChart.dispose();
-            // 摆球需要canvas容器
-            const canvasHtml = `<canvas id="pendulumCanvas" width="1000" height="500" style="width:100%; height:500px; display:block;"></canvas>`;
-            document.getElementById('dynamicChart').innerHTML = canvasHtml;
-            renderChart3('pendulumCanvas');
+            `;
+            
+            if (currentEChart && currentEChart.dispose) {
+                currentEChart.dispose();
+                currentEChart = null;
+            }
+            
+            if (chartType === 'chart1') {
+                currentEChart = renderChart1('dynamicChart');
+            } else if (chartType === 'chart2') {
+                currentEChart = renderChart2('dynamicChart');
+            } else if (chartType === 'chart3') {
+                renderChart3('dynamicChart');
+            }
         }
-    }
 
-    // 事件绑定
-    document.getElementById('startBtn').addEventListener('click', () => {
-        showPage('explore');
-    });
-    document.getElementById('backToHomeBtn').addEventListener('click', () => {
-        if (pendulumSim) pendulumSim.destroy();
-        showPage('home');
-    });
-    document.getElementById('backToCardsBtn').addEventListener('click', () => {
-        if (pendulumSim) pendulumSim.destroy();
-        showPage('explore');
-    });
-    
-    document.querySelectorAll('.insight-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            const chartType = card.getAttribute('data-chart');
-            currentChart = chartType;
-            renderDetailChart(chartType);
-            showPage('detail');
+        // ============== 事件绑定 ==============
+        if (startBtn) {
+            startBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage('explore');
+            });
+        }
+        
+        if (backToHomeBtn) {
+            backToHomeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage('home');
+            });
+        }
+        
+        if (backToCardsBtn) {
+            backToCardsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage('explore');
+            });
+        }
+        
+        // 卡片点击事件
+        const cards = document.querySelectorAll('.insight-card');
+        cards.forEach(function(card) {
+            card.addEventListener('click', function(e) {
+                const chartType = this.getAttribute('data-chart');
+                renderDetailChart(chartType);
+                showPage('detail');
+            });
         });
-    });
 
-    // 初始显示首页
-    showPage('home');
+        // 初始显示首页
+        showPage('home');
+        
+        console.log('✅ 页面已加载，点击"开始探索"按钮');
+    })();
 </script>
 </body>
 </html>
