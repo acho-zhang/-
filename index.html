@@ -458,8 +458,8 @@
                 yAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontWeight: 500, color: '#7a6a85' } },
                 legend: { data: ['我 ', '对方 '], left: 'left', textStyle: { color: '#9b89a3' } },
                 series: [
-                    { name: '我 ', type: 'bar', stack: 'total', data: myPercent, itemStyle: { color: '#dcb5c5', borderRadius: [0, 6, 6, 0], label: { show: true, position: 'right', formatter: p => p.value.toFixed(1)+'%' } } },
-                    { name: '对方 ', type: 'bar', stack: 'total', data: theirPercent, itemStyle: { color: '#a7b9cd', borderRadius: [6, 0, 0, 6], label: { show: true, position: 'left', formatter: p => p.value.toFixed(1)+'%' } } }
+                    { name: '我 ', type: 'bar', stack: 'total', data: myPercent, itemStyle: { color: '#eed3da', borderRadius: [0, 6, 6, 0], label: { show: true, position: 'right', formatter: p => p.value.toFixed(1)+'%' } } },
+                    { name: '对方 ', type: 'bar', stack: 'total', data: theirPercent, itemStyle: { color: '#b5c0d1', borderRadius: [6, 0, 0, 6], label: { show: true, position: 'left', formatter: p => p.value.toFixed(1)+'%' } } }
                 ]
             });
             return chart;
