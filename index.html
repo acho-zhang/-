@@ -160,7 +160,7 @@
         .insight-card:hover {
             transform: translateY(-6px);
             background: #fffaf3;
-            border-color: #d6c1b5;
+            border-color: #9a88a3;
             box-shadow: 0 15px 25px -10px rgba(100, 80, 110, 0.15);
         }
 
@@ -184,7 +184,7 @@
         }
 
         .card-tag {
-            background: #ede3e9;
+            background: #d6c1b5;
             padding: 0.25rem 1rem;
             border-radius: 40px;
             font-size: 0.7rem;
@@ -434,7 +434,7 @@
                 yAxis: { type: 'value', name: '总字数 (字符)', nameTextStyle: { color: '#9a88a3' } },
                 series: [{
                     type: 'bar', data: relationData.map(d => d.totalWords),
-                    itemStyle: { borderRadius: [10,10,0,0], color: '#c7c1cb', label: { show: true, position: 'top', fontWeight: 'bold', color: '#7a6392' } }
+                    itemStyle: { borderRadius: [10,10,0,0], color: '#e9dfe2', label: { show: true, position: 'top', fontWeight: 'bold', color: '#7a6392' } }
                 }]
             });
             return chart;
