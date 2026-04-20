@@ -227,7 +227,7 @@
 
         .chart-box {
             width: 100%;
-            height: 520px;
+            height: 600px;
         }
 
         .track-canvas {
@@ -248,8 +248,8 @@
         @media (max-width: 700px) {
             .hero-title { font-size: 1.9rem; }
             .cards-grid { grid-template-columns: 1fr; }
-            .chart-box { height: 480px; }
-            .track-canvas { height: 480px; }
+            .chart-box { height: 380px; }
+            .track-canvas { height: 560px; }
         }
     </style>
 </head>
@@ -265,7 +265,7 @@
                 「数字时代的偏心」—— 即时弹窗 vs 深海沉船
             </div>
             <div class="hero-text">
-                我们回复不同人的速度，揭示人际关系的"权力地图"。<br>
+                我们回复不同人的速度，揭示人际关系的“权力地图”。<br>
                 基于真实聊天记录，分析 <strong>恋人 · 母女 · 朋友 · 师生 · 兄妹</strong> 五类关系。
             </div>
             <button class="start-btn" id="startBtn">
@@ -376,7 +376,7 @@
             { name: "兄妹", totalWords: 147, myWords: 99, theirWords: 48, myRatio: 0.6735, avgDelaySec: 3600 }
         ];
 
-        // 球体半径映射
+        // 球体半径映射 (差距小一点)
         const minWords = Math.min(...relationData.map(d => d.totalWords));
         const maxWords = Math.max(...relationData.map(d => d.totalWords));
         function getRadius(words) {
@@ -385,7 +385,7 @@
             return minR + (words - minWords) / (maxWords - minWords) * (maxR - minR);
         }
 
-        // 速度映射
+        // 速度映射：延迟越大速度越慢
         const delays = relationData.map(d => d.avgDelaySec);
         const maxDelay = Math.max(...delays);
         const minDelay = Math.min(...delays);
@@ -400,7 +400,6 @@
 
         let trackAnimation = null;
         let currentChart = null;
-        let chart1CanvasAnimation = null;
 
         const homePage = document.getElementById('homePage');
         const explorePage = document.getElementById('explorePage');
@@ -415,10 +414,6 @@
                 trackAnimation.stop();
                 trackAnimation = null;
             }
-            if (chart1CanvasAnimation) {
-                cancelAnimationFrame(chart1CanvasAnimation);
-                chart1CanvasAnimation = null;
-            }
             homePage.style.display = 'none';
             explorePage.style.display = 'none';
             detailPage.style.display = 'none';
@@ -427,225 +422,21 @@
             if (pageName === 'detail') detailPage.style.display = 'block';
         }
 
-        // ========== 图表1：玻璃容器 + 小球堆积动画 ==========
-        class GlassContainerChart {
-            constructor(containerId, data) {
-                this.container = document.getElementById(containerId);
-                if (!this.container) return;
-                this.data = data;
-                this.canvas = null;
-                this.ctx = null;
-                this.animationId = null;
-                this.ballPositions = {}; // 存储每个柱子的球体位置
-                this.init();
-            }
-            
-            init() {
-                this.createCanvas();
-                this.resize();
-                window.addEventListener('resize', () => this.resize());
-                this.generateBallPositions();
-                this.startAnimation();
-            }
-            
-            createCanvas() {
-                this.container.innerHTML = '';
-                this.canvas = document.createElement('canvas');
-                this.canvas.style.width = '100%';
-                this.canvas.style.height = '100%';
-                this.canvas.style.display = 'block';
-                this.canvas.style.borderRadius = '1.2rem';
-                this.container.appendChild(this.canvas);
-                this.ctx = this.canvas.getContext('2d');
-            }
-            
-            resize() {
-                const rect = this.container.getBoundingClientRect();
-                this.canvas.width = rect.width;
-                this.canvas.height = rect.height;
-                this.width = this.canvas.width;
-                this.height = this.canvas.height;
-                this.generateBallPositions();
-                this.draw();
-            }
-            
-            generateBallPositions() {
-                // 容器参数
-                const barCount = this.data.length;
-                const barWidth = Math.min(100, (this.width - 120) / barCount - 20);
-                const startX = (this.width - (barCount * (barWidth + 20))) / 2 + 20;
-                const containerBottom = this.height - 80;
-                const containerTop = 60;
-                const containerHeight = containerBottom - containerTop;
-                
-                // 计算每个柱子的最大球数（基于最大字数）
-                const maxWordsVal = maxWords;
-                
-                this.ballPositions = {};
-                
-                this.data.forEach((item, idx) => {
-                    const centerX = startX + idx * (barWidth + 20) + barWidth / 2;
-                    const barLeft = centerX - barWidth / 2 + 10;
-                    const barRight = centerX + barWidth / 2 - 10;
-                    
-                    // 球体半径：8-14px，让视觉更丰富
-                    const ballRadius = 8;
-                    // 根据字数比例计算球的数量（最多约60个球）
-                    const wordRatio = item.totalWords / maxWordsVal;
-                    const ballCount = Math.max(8, Math.min(45, Math.floor(wordRatio * 45)));
-                    
-                    const balls = [];
-                    const cols = Math.floor((barRight - barLeft) / (ballRadius * 2.2));
-                    const effectiveCols = Math.max(3, cols);
-                    
-                    for (let i = 0; i < ballCount; i++) {
-                        const col = i % effectiveCols;
-                        const row = Math.floor(i / effectiveCols);
-                        const x = barLeft + col * (ballRadius * 2.2) + ballRadius;
-                        const y = containerBottom - row * (ballRadius * 2.2) - ballRadius;
-                        if (y > containerTop + ballRadius) {
-                            balls.push({
-                                x: x,
-                                y: y,
-                                targetY: y,
-                                radius: ballRadius,
-                                phase: Math.random() * Math.PI * 2
-                            });
-                        }
-                    }
-                    
-                    this.ballPositions[idx] = {
-                        balls: balls,
-                        centerX: centerX,
-                        barWidth: barWidth,
-                        containerTop: containerTop,
-                        containerBottom: containerBottom,
-                        wordCount: item.totalWords,
-                        name: item.name
-                    };
-                });
-            }
-            
-            drawGlassContainer(x, y, width, height, opacity = 0.85) {
-                const ctx = this.ctx;
-                const radius = 12;
-                
-                // 玻璃容器主体
-                ctx.beginPath();
-                ctx.moveTo(x + radius, y);
-                ctx.lineTo(x + width - radius, y);
-                ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-                ctx.lineTo(x + width, y + height - radius);
-                ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-                ctx.lineTo(x + radius, y + height);
-                ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-                ctx.lineTo(x, y + radius);
-                ctx.quadraticCurveTo(x, y, x + radius, y);
-                ctx.closePath();
-                
-                // 玻璃半透明填充
-                ctx.fillStyle = `rgba(220, 210, 230, ${opacity * 0.3})`;
-                ctx.fill();
-                
-                // 玻璃边框
-                ctx.strokeStyle = 'rgba(180, 160, 190, 0.7)';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                
-                // 玻璃高光效果
-                ctx.beginPath();
-                ctx.moveTo(x + 5, y + 5);
-                ctx.lineTo(x + width - 10, y + 5);
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-                ctx.lineWidth = 1.5;
-                ctx.stroke();
-                
-                // 底部阴影
-                ctx.beginPath();
-                ctx.moveTo(x + 3, y + height - 3);
-                ctx.lineTo(x + width - 3, y + height - 3);
-                ctx.strokeStyle = 'rgba(140, 120, 160, 0.3)';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
-            
-            draw() {
-                if (!this.ctx || !this.width) return;
-                this.ctx.clearRect(0, 0, this.width, this.height);
-                
-                // 背景
-                this.ctx.fillStyle = '#fefaf5';
-                this.ctx.fillRect(0, 0, this.width, this.height);
-                
-                // 绘制标题
-                this.ctx.font = '600 16px "Inter"';
-                this.ctx.fillStyle = '#6d5a7c';
-                this.ctx.textAlign = 'center';
-                this.ctx.fillText('📊 消息总量对比 · 玻璃容器中的情感颗粒', this.width / 2, 35);
-                
-                this.ctx.font = '12px "Inter"';
-                this.ctx.fillStyle = '#9a88a3';
-                this.ctx.fillText('柱子越高 = 对话越频繁 · 小球越多 = 情感投入越深', this.width / 2, 55);
-                
-                // 绘制每个玻璃容器
-                for (let idx in this.ballPositions) {
-                    const bp = this.ballPositions[idx];
-                    const containerX = bp.centerX - bp.barWidth / 2;
-                    const containerWidth = bp.barWidth;
-                    const containerHeight = bp.containerBottom - bp.containerTop;
-                    
-                    // 绘制玻璃容器
-                    this.drawGlassContainer(containerX, bp.containerTop, containerWidth, containerHeight, 0.9);
-                    
-                    // 绘制小球
-                    for (let ball of bp.balls) {
-                        // 微微浮动效果
-                        const floatY = ball.y + Math.sin(Date.now() * 0.002 + ball.phase) * 1.5;
-                        
-                        const grad = this.ctx.createRadialGradient(ball.x - 2, floatY - 2, 2, ball.x, floatY, ball.radius);
-                        grad.addColorStop(0, '#c9b3d0');
-                        grad.addColorStop(1, '#a07faa');
-                        
-                        this.ctx.beginPath();
-                        this.ctx.arc(ball.x, floatY, ball.radius - 1, 0, Math.PI * 2);
-                        this.ctx.fillStyle = grad;
-                        this.ctx.fill();
-                        this.ctx.shadowBlur = 0;
-                    }
-                    
-                    // 绘制容器底部标签
-                    this.ctx.font = '600 13px "Inter"';
-                    this.ctx.fillStyle = '#6d5a7c';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.fillText(bp.name, bp.centerX, bp.containerBottom + 25);
-                    
-                    // 显示字数
-                    this.ctx.font = '11px monospace';
-                    this.ctx.fillStyle = '#9a88a3';
-                    this.ctx.fillText(`${bp.wordCount}字`, bp.centerX, bp.containerBottom + 42);
-                }
-            }
-            
-            startAnimation() {
-                const animate = () => {
-                    this.draw();
-                    this.animationId = requestAnimationFrame(animate);
-                };
-                this.animationId = requestAnimationFrame(animate);
-            }
-            
-            stop() {
-                if (this.animationId) {
-                    cancelAnimationFrame(this.animationId);
-                    this.animationId = null;
-                }
-            }
-        }
-        
+        // 图表1
         function renderChart1(containerId) {
-            const container = document.getElementById(containerId);
-            if (!container) return null;
-            const chart = new GlassContainerChart(containerId, relationData);
+            const dom = document.getElementById(containerId);
+            if (!dom) return null;
+            const chart = echarts.init(dom);
+            chart.setOption({
+                tooltip: { trigger: 'axis', formatter: p => `<strong>${p[0].name}</strong><br/>📨 总字数: ${p[0].value} 字` },
+                grid: { left: '8%', right: '5%', top: '12%', bottom: '5%', containLabel: true },
+                xAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontWeight: 500, color: '#7a6a85' } },
+                yAxis: { type: 'value', name: '总字数 (字符)', nameTextStyle: { color: '#9a88a3' } },
+                series: [{
+                    type: 'bar', data: relationData.map(d => d.totalWords),
+                    itemStyle: { borderRadius: [10,10,0,0], color: '#c9b3c0', label: { show: true, position: 'top', fontWeight: 'bold', color: '#7a6392' } }
+                }]
+            });
             return chart;
         }
 
@@ -674,7 +465,7 @@
             return chart;
         }
 
-        // ========== 赛道往返动画 ==========
+        // ========== 赛道往返动画 - 五条独立赛道，依次排开 ==========
         class TrackRacer {
             constructor(canvasId, data) {
                 this.canvas = document.getElementById(canvasId);
@@ -696,13 +487,14 @@
                 if (!container) return;
                 const rect = container.getBoundingClientRect();
                 this.canvas.width = rect.width;
-                this.canvas.height = rect.height;
+                this.canvas.height = 540;
                 this.width = this.canvas.width;
                 this.height = this.canvas.height;
                 this.updateTrackPositions();
                 this.draw();
             }
             buildTracks() {
+                // 按原始顺序显示（恋人、朋友、母女、师生、兄妹），也可按延迟排序，但清晰排开即可
                 const order = [...this.data];
                 const palette = ['#c49c99', '#d1b7b8', '#c7c1cb', '#dbcbc2', '#e8ddd8'];
                 
@@ -758,6 +550,7 @@
                 
                 for (let t of this.tracks) {
                     const lineY = t.y;
+                    // 赛道虚线
                     this.ctx.beginPath();
                     this.ctx.moveTo(t.startX, lineY);
                     this.ctx.lineTo(t.endX, lineY);
@@ -767,6 +560,7 @@
                     this.ctx.stroke();
                     this.ctx.setLineDash([]);
                     
+                    // 起点/终点装饰
                     this.ctx.beginPath();
                     this.ctx.arc(t.startX, lineY, 7, 0, 2 * Math.PI);
                     this.ctx.fillStyle = '#e7dbcf';
@@ -775,15 +569,18 @@
                     this.ctx.arc(t.endX, lineY, 7, 0, 2 * Math.PI);
                     this.ctx.fill();
                     
+                    // 关系名称标签
                     this.ctx.font = `600 14px "Inter"`;
                     this.ctx.fillStyle = t.labelColor;
                     this.ctx.fillText(t.name, 12, lineY + 5);
                     
+                    // 右侧延迟信息
                     const delayText = t.delaySec > 3600 ? `${(t.delaySec/3600).toFixed(1)}h` : `${t.delaySec.toFixed(0)}s`;
                     this.ctx.font = `11px monospace`;
                     this.ctx.fillStyle = '#aa9bae';
                     this.ctx.fillText(`回复延迟 ${delayText}`, this.width - 95, lineY + 5);
                     
+                    // 小球
                     const x = t.posX;
                     const radius = t.radius;
                     const grad = this.ctx.createRadialGradient(x-4, lineY-4, 3, x, lineY, radius);
@@ -800,6 +597,7 @@
                     this.ctx.stroke();
                     this.ctx.shadowBlur = 0;
                     
+                    // 小球内显示字数
                     this.ctx.font = `${Math.max(9, Math.min(12, radius/3.2))}px "Inter"`;
                     this.ctx.fillStyle = '#fef7e8';
                     this.ctx.fillText(`${t.totalWords}`, x-4, lineY+4);
@@ -844,7 +642,7 @@
         function renderChart3(containerId) {
             const container = document.getElementById(containerId);
             if (!container) return;
-            container.innerHTML = `<canvas id="trackCanvas" class="track-canvas" style="width:100%; height:100%; display:block;"></canvas>`;
+            container.innerHTML = `<canvas id="trackCanvas" class="track-canvas" style="width:100%; height:540px; display:block;"></canvas>`;
             trackAnimation = new TrackRacer('trackCanvas', relationData);
         }
 
@@ -852,4 +650,33 @@
             detailContent.innerHTML = `
                 <div class="chart-container">
                     <div class="chart-header">
-                        <div class="chart-title">${chartType === 'chart1' ? '📊 消息总量对比' : chartType === 'chart2' ? '⚖️ 对话天平
+                        <div class="chart-title">${chartType === 'chart1' ? '📊 消息总量对比' : chartType === 'chart2' ? '⚖️ 对话天平' : '🏁 心理阻力 · 赛道往返'}</div>
+                        <div class="chart-sub">${chartType === 'chart1' ? '横向权力对比，社交能量分布' : chartType === 'chart2' ? '横向占比：我 vs 对方' : '小球速度 = 回复速度，体积 = 对话数量'}</div>
+                    </div>
+                    <div id="dynamicChart" class="chart-box"></div>
+                </div>
+            `;
+            setTimeout(() => {
+                if (currentChart && currentChart.dispose) currentChart.dispose();
+                if (chartType === 'chart1') currentChart = renderChart1('dynamicChart');
+                else if (chartType === 'chart2') currentChart = renderChart2('dynamicChart');
+                else if (chartType === 'chart3') renderChart3('dynamicChart');
+                window.dispatchEvent(new Event('resize'));
+            }, 80);
+        }
+
+        if (startBtn) startBtn.onclick = () => showPage('explore');
+        if (backToHomeBtn) backToHomeBtn.onclick = () => showPage('home');
+        if (backToCardsBtn) backToCardsBtn.onclick = () => showPage('explore');
+        document.querySelectorAll('.insight-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const type = card.getAttribute('data-chart');
+                renderDetailChart(type);
+                showPage('detail');
+            });
+        });
+        showPage('home');
+    })();
+</script>
+</body>
+</html>
