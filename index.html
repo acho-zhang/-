@@ -3,253 +3,521 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>社交心理 · 消息回复的隐形压力 | 莫兰迪赛道·往返微粒</title>
+    <title>社交心理 | 消息回复的隐形张力</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #efe7df;
+            --card: rgba(255, 251, 245, 0.9);
+            --card-strong: rgba(255, 250, 245, 0.96);
+            --line: #e3d6cb;
+            --text: #4d433b;
+            --muted: #8a786b;
+            --accent: #b88a7a;
+            --accent-soft: #e8cfc4;
+            --accent-cool: #9aa7c8;
+            --accent-deep: #755f83;
+            --accent-mint: #a8bfae;
+            --danger: #c48181;
+            --good: #85a58a;
+            --shadow: 0 14px 32px -18px rgba(88, 64, 44, 0.28);
+        }
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            user-select: none;
         }
 
         body {
-            background: #efeae4;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            color: #3e3a35;
             min-height: 100vh;
+            background:
+                radial-gradient(circle at top left, rgba(216, 191, 179, 0.35), transparent 34%),
+                radial-gradient(circle at bottom right, rgba(153, 168, 191, 0.28), transparent 30%),
+                linear-gradient(180deg, #f4eee8 0%, var(--bg) 100%);
+            color: var(--text);
+            font-family: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
             overflow-x: hidden;
         }
 
         #particles-canvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             pointer-events: none;
+            opacity: 0.38;
             z-index: 0;
-            opacity: 0.35;
         }
 
         .page {
-            max-width: 1300px;
+            max-width: 1320px;
             margin: 0 auto;
-            padding: 2rem 1.8rem;
+            padding: 28px 22px 38px;
             position: relative;
-            z-index: 2;
+            z-index: 1;
         }
 
         .glass-card {
-            background: rgba(253, 250, 245, 0.88);
-            backdrop-filter: blur(4px);
-            border-radius: 2rem;
-            box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(210, 190, 170, 0.4);
+            background: var(--card);
+            border: 1px solid rgba(222, 208, 197, 0.95);
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(8px);
         }
 
         .home-page {
+            min-height: 84vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 80vh;
         }
 
         .hero-card {
-            background: rgba(253, 251, 247, 0.96);
-            border-radius: 2.5rem;
-            padding: 3rem 2.5rem;
+            max-width: 820px;
+            padding: 48px 44px;
+            background: var(--card-strong);
             text-align: center;
-            max-width: 760px;
-            margin: 0 auto;
-            border: 1px solid #e2d5ca;
         }
 
         .hero-title {
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 4vw, 3.1rem);
             font-weight: 700;
-            background: linear-gradient(120deg, #9b7fae, #c299b5, #7d9eb5);
-            background-clip: text;
+            line-height: 1.15;
+            margin-bottom: 14px;
+            background: linear-gradient(120deg, #8f6e62, #6f7fa1, #9e6d7d);
             -webkit-background-clip: text;
+            background-clip: text;
             color: transparent;
-            margin-bottom: 0.8rem;
         }
 
         .hero-sub {
-            font-size: 1rem;
-            color: #8a7b6e;
-            border-left: 4px solid #e5d6cd;
-            padding-left: 1rem;
-            margin: 1rem auto;
             display: inline-block;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(232, 215, 204, 0.85);
+            color: #7f6458;
+            font-size: 0.9rem;
+            margin-bottom: 18px;
         }
 
         .hero-text {
-            color: #6c6258;
-            line-height: 1.55;
-            margin: 1.5rem 0;
+            color: #6c5d52;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .hero-metrics {
+            margin-top: 26px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .mini-stat {
+            padding: 16px 14px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.64);
+            border: 1px solid rgba(224, 211, 201, 0.88);
+        }
+
+        .mini-stat strong {
+            display: block;
+            font-size: 1.25rem;
+            color: var(--accent-deep);
+            margin-bottom: 4px;
+        }
+
+        .mini-stat span {
+            font-size: 0.84rem;
+            color: var(--muted);
+        }
+
+        .start-btn,
+        .back-btn,
+        .chip-btn,
+        .toggle-btn,
+        .tab-btn {
+            border: none;
+            cursor: pointer;
+            transition: all 0.22s ease;
+            font-family: inherit;
         }
 
         .start-btn {
-            background: #d6c1b5;
-            border: none;
-            padding: 0.85rem 2rem;
+            margin-top: 28px;
+            padding: 14px 28px;
+            border-radius: 999px;
+            background: linear-gradient(120deg, #c59f8f, #8b9abb);
+            color: white;
             font-size: 1rem;
             font-weight: 600;
-            color: white;
-            border-radius: 48px;
-            cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 5px 12px rgba(130, 100, 140, 0.25);
+            box-shadow: 0 12px 20px -14px rgba(108, 84, 115, 0.6);
         }
 
-        .start-btn:hover {
-            background: #e5d6cd;
-            transform: translateY(-3px);
-        }
-
-        .explore-page {
-            display: none;
-        }
-
-        .explore-header {
-            margin-bottom: 2rem;
-        }
-
-        .back-btn {
-            background: #e4dbd1;
-            border: none;
-            padding: 0.5rem 1.2rem;
-            border-radius: 40px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            color: #7c6a5a;
-            font-weight: 500;
-            transition: 0.2s;
-        }
-
+        .start-btn:hover,
         .back-btn:hover {
-            background: #cfbfb0;
-            color: #fefaf5;
+            transform: translateY(-2px);
         }
 
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-            gap: 2rem;
-            margin-top: 1.8rem;
-        }
-
-        .insight-card {
-            background: rgba(255, 251, 245, 0.92);
-            border-radius: 1.8rem;
-            padding: 1.8rem 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid #dfd3c7;
-            text-align: center;
-            backdrop-filter: blur(2px);
-        }
-
-        .insight-card:hover {
-            transform: translateY(-6px);
-            background: #fffaf3;
-            border-color: #9a88a3;
-            box-shadow: 0 15px 25px -10px rgba(100, 80, 110, 0.15);
-        }
-
-        .card-icon {
-            font-size: 2.3rem;
-            margin-bottom: 0.7rem;
-        }
-
-        .card-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #6b5b7c;
-            margin-bottom: 0.5rem;
-        }
-
-        .card-desc {
-            color: #8f7e6d;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            margin-bottom: 1rem;
-        }
-
-        .card-tag {
-            background: #d6c1b5;
-            padding: 0.25rem 1rem;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            color: #ffffff;
-        }
-
+        .explore-page,
         .chart-detail-page {
             display: none;
         }
 
+        .explore-header {
+            margin-bottom: 26px;
+        }
+
+        .back-btn {
+            background: rgba(228, 218, 208, 0.95);
+            color: #765f52;
+            padding: 10px 18px;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--accent-deep);
+            margin-bottom: 8px;
+        }
+
+        .section-sub {
+            color: var(--muted);
+            line-height: 1.7;
+            margin-bottom: 18px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+        }
+
+        .insight-card {
+            padding: 22px 20px;
+            border-radius: 26px;
+            background: rgba(255, 251, 246, 0.88);
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.24s ease;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(141, 118, 152, 0.45);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 1.24rem;
+            font-weight: 650;
+            color: var(--accent-deep);
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            color: var(--muted);
+            font-size: 0.92rem;
+            line-height: 1.65;
+            min-height: 70px;
+        }
+
+        .card-tag {
+            margin-top: 14px;
+            display: inline-flex;
+            align-items: center;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(209, 192, 184, 0.9);
+            color: white;
+            font-size: 0.74rem;
+            letter-spacing: 0.03em;
+        }
+
         .chart-container {
-            background: rgba(255, 252, 248, 0.92);
-            border-radius: 2rem;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-            backdrop-filter: blur(3px);
-            border: 1px solid #e3d8ce;
+            padding: 24px;
         }
 
         .chart-header {
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
+            align-items: flex-end;
+            gap: 18px;
             flex-wrap: wrap;
-            margin-bottom: 1rem;
-            padding-bottom: 0.6rem;
-            border-bottom: 2px solid #e1d3c8;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--line);
         }
 
         .chart-title {
-            font-size: 1.5rem;
-            font-weight: 650;
-            color: #6d5a7c;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent-deep);
         }
 
         .chart-sub {
-            color: #9a88a3;
-            font-size: 0.8rem;
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            max-width: 760px;
         }
 
         .chart-box {
             width: 100%;
-            height: 600px;
+            height: 520px;
         }
 
         .track-canvas {
             width: 100%;
             height: 520px;
-            background: #fefaf5;
-            border-radius: 1.8rem;
-            box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.03);
+            display: block;
+            border-radius: 24px;
+            background: rgba(255, 250, 245, 0.92);
+        }
+
+        .controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 16px;
+            margin-bottom: 18px;
+            align-items: center;
+        }
+
+        .range-group,
+        .select-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.72);
+            border-radius: 18px;
+            border: 1px solid var(--line);
+        }
+
+        .range-group label,
+        .select-group label {
+            font-size: 0.84rem;
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        .range-group input[type="range"] {
+            accent-color: #a78174;
+            width: 180px;
+        }
+
+        .range-value {
+            min-width: 64px;
+            color: var(--accent-deep);
+            font-weight: 600;
+            font-size: 0.84rem;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chip-btn,
+        .toggle-btn,
+        .tab-btn {
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid var(--line);
+            color: #7a6559;
+            font-size: 0.84rem;
+            font-weight: 600;
+        }
+
+        .chip-btn.active,
+        .toggle-btn.active,
+        .tab-btn.active {
+            background: linear-gradient(120deg, rgba(195, 160, 145, 0.95), rgba(142, 156, 187, 0.88));
+            color: white;
+            border-color: transparent;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: minmax(320px, 1.12fr) minmax(300px, 0.88fr);
+            gap: 18px;
+            align-items: start;
+        }
+
+        .panel-card {
+            padding: 18px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.56);
+            border: 1px solid rgba(228, 217, 209, 0.9);
+        }
+
+        .table-wrap {
+            overflow: auto;
+            max-height: 540px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: rgba(250, 244, 238, 0.96);
+            color: #7d655a;
+            font-size: 0.78rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+        }
+
+        tbody td {
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(231, 221, 213, 0.85);
+            vertical-align: top;
+            color: #5c4f46;
+        }
+
+        tbody tr {
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover,
+        tbody tr.active {
+            background: rgba(238, 229, 222, 0.72);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .pill.warm { background: rgba(232, 196, 177, 0.75); color: #8d5e4f; }
+        .pill.fast { background: rgba(186, 221, 204, 0.72); color: #52745d; }
+        .pill.calm { background: rgba(196, 205, 230, 0.72); color: #5f6f94; }
+        .pill.gray { background: rgba(217, 210, 206, 0.85); color: #756860; }
+        .pill.alert { background: rgba(223, 184, 184, 0.8); color: #8d5959; }
+
+        .metric-bar {
+            width: 100%;
+            min-width: 92px;
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(224, 214, 207, 0.8);
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .metric-bar > span {
+            display: block;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #ccab9c, #92a2c7);
+        }
+
+        .insight-note {
+            margin-top: 14px;
+            padding: 16px;
+            border-radius: 20px;
+            background: rgba(255, 249, 244, 0.9);
+            border: 1px solid rgba(228, 218, 209, 0.92);
+            color: #6a5b51;
+            line-height: 1.75;
+            min-height: 108px;
+        }
+
+        .insight-note strong {
+            color: var(--accent-deep);
+        }
+
+        .legend-inline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--muted);
+            font-size: 0.82rem;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
         }
 
         .footer-note {
             text-align: center;
-            margin-top: 2rem;
-            font-size: 0.7rem;
-            color: #b6a596;
+            color: rgba(120, 104, 93, 0.78);
+            font-size: 0.76rem;
+            margin-top: 18px;
         }
 
-        @media (max-width: 700px) {
-            .hero-title { font-size: 1.9rem; }
-            .cards-grid { grid-template-columns: 1fr; }
-            .chart-box { height: 380px; }
-            .track-canvas { height: 560px; }
+        @media (max-width: 980px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-box {
+                height: 430px;
+            }
+
+            .track-canvas {
+                height: 460px;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .page {
+                padding: 18px 14px 26px;
+            }
+
+            .hero-card,
+            .chart-container {
+                padding: 18px;
+            }
+
+            .card-desc {
+                min-height: auto;
+            }
+
+            .range-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .range-group input[type="range"] {
+                width: 100%;
+                min-width: 0;
+            }
         }
     </style>
 </head>
@@ -258,424 +526,1112 @@
 <div class="page">
     <div id="homePage" class="home-page">
         <div class="hero-card glass-card">
-            <div class="hero-title">
-                <i class="fas fa-comment-dots"></i> 消息回复的隐形压力
-            </div>
-            <div class="hero-sub">
-                「数字时代的偏心」—— 即时弹窗 vs 深海沉船
-            </div>
+            <div class="hero-title">消息回复的隐形张力</div>
+            <div class="hero-sub">即时弹窗、延迟回复与关系权力的可视化解读</div>
             <div class="hero-text">
-                我们回复不同人的速度，揭示人际关系的“权力地图”。<br>
-                基于真实聊天记录，分析 <strong>恋人 · 母女 · 朋友 · 师生 · 兄妹</strong> 五类关系。
+                这份可视化作品把聊天记录拆成三种维度：谁说得更多、谁回得更快、关系在哪个时间窗被点亮。
+                从恋人、母女、朋友、师生到兄妹，每段对话都不只是内容本身，也在无声地暴露情感投入、互动节奏与关系温度。
             </div>
-            <button class="start-btn" id="startBtn">
-                <i class="fas fa-chart-line"></i> 开始探索
-            </button>
+            <div class="hero-metrics">
+                <div class="mini-stat">
+                    <strong>6</strong>
+                    <span>交互洞察卡片</span>
+                </div>
+                <div class="mini-stat">
+                    <strong>4 象限</strong>
+                    <span>情感张力分类</span>
+                </div>
+                <div class="mini-stat">
+                    <strong>3 层</strong>
+                    <span>关系、权力、时间</span>
+                </div>
+                <div class="mini-stat">
+                    <strong>真实数据</strong>
+                    <span>基于聊天记录统计</span>
+                </div>
+            </div>
+            <button class="start-btn" id="startBtn">进入可视化探索</button>
         </div>
     </div>
 
     <div id="explorePage" class="explore-page">
         <div class="explore-header">
-            <button class="back-btn" id="backToHomeBtn"><i class="fas fa-arrow-left"></i> 返回首页</button>
+            <button class="back-btn" id="backToHomeBtn">返回首页</button>
+        </div>
+        <div class="section-title">六个角度，看见关系中的隐形用力</div>
+        <div class="section-sub">
+            前三张图负责建立基础认识，后三张图继续追问“关系是什么气压”“谁在承担更多情感劳动”“这些关系活在一天中的哪个时区”。
         </div>
         <div class="cards-grid">
             <div class="insight-card" data-chart="chart1">
-                <div class="card-icon">📊</div>
+                <div class="card-icon">01</div>
                 <div class="card-title">消息总量对比</div>
-                <div class="card-desc">横向权力对比，谁占据了你社交能量的大头？<br>恋人·朋友·母女·师生·兄妹</div>
-                <div class="card-tag">点击查看 →</div>
+                <div class="card-desc">看谁占据了更多社交能量。总字数高，不一定更亲密，但一定更消耗注意力。</div>
+                <div class="card-tag">基础指标</div>
             </div>
             <div class="insight-card" data-chart="chart2">
-                <div class="card-icon">⚖️</div>
+                <div class="card-icon">02</div>
                 <div class="card-title">对话天平</div>
-                <div class="card-desc">我的字数 vs 对方字数，谁倾注了更多语言？<br>横向百分比柱状图</div>
-                <div class="card-tag">点击查看 →</div>
+                <div class="card-desc">我的字数占比与对方字数占比，显示说话权和倾听权如何分配。</div>
+                <div class="card-tag">说话比例</div>
             </div>
             <div class="insight-card" data-chart="chart3">
-                <div class="card-icon">🏁</div>
-                <div class="card-title">心理阻力·赛道往返</div>
-                <div class="card-desc">谁的消息你会秒回，谁的消息又常常石沉大海？<br>速度 = 回复速度，体积 = 对话数量</div>
-                <div class="card-tag">点击查看 →</div>
+                <div class="card-icon">03</div>
+                <div class="card-title">心理阻力赛道</div>
+                <div class="card-desc">谁让我秒回，谁让我延迟。把回复速度做成有节奏感的赛道运动。</div>
+                <div class="card-tag">动态表现</div>
+            </div>
+            <div class="insight-card" data-chart="chart4">
+                <div class="card-icon">04</div>
+                <div class="card-title">表4：情感张力矩阵</div>
+                <div class="card-desc">把总字数和平均延迟放进同一平面，用四象限定义关系的热度、效率与深度。</div>
+                <div class="card-tag">图表联动表格</div>
+            </div>
+            <div class="insight-card" data-chart="chart5">
+                <div class="card-icon">05</div>
+                <div class="card-title">表5：回复熵与权力结构</div>
+                <div class="card-desc">比较谁回得更快、谁说得更多，识别高投入者、倾听者与掌握节奏的人。</div>
+                <div class="card-tag">筛选与模式切换</div>
+            </div>
+            <div class="insight-card" data-chart="chart6">
+                <div class="card-icon">06</div>
+                <div class="card-title">表6：社交时差</div>
+                <div class="card-desc">关系不只活在“谁和谁”之间，也活在“什么时候”。看活跃时窗和延迟趋势。</div>
+                <div class="card-tag">双标签页</div>
             </div>
         </div>
     </div>
 
     <div id="detailPage" class="chart-detail-page">
         <div class="explore-header">
-            <button class="back-btn" id="backToCardsBtn"><i class="fas fa-arrow-left"></i> 返回卡片</button>
+            <button class="back-btn" id="backToCardsBtn">返回卡片</button>
         </div>
         <div id="detailContent"></div>
     </div>
 </div>
 
 <script>
-    (function() {
-        // 粒子背景
-        const canvas = document.getElementById('particles-canvas');
-        let ctx = canvas.getContext('2d');
-        let width = window.innerWidth, height = window.innerHeight;
-        let particles = [];
-
-        function initParticles() {
-            const colors = ['rgba(173, 150, 190, 0.3)', 'rgba(150, 170, 190, 0.3)', 'rgba(200, 165, 180, 0.3)', 'rgba(140, 175, 190, 0.25)'];
-            for (let i = 0; i < 65; i++) {
-                particles.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    radius: Math.random() * 3 + 1.5,
-                    speedX: (Math.random() - 0.5) * 0.2,
-                    speedY: (Math.random() - 0.5) * 0.15,
-                    color: colors[Math.floor(Math.random() * colors.length)]
-                });
-            }
-        }
-
-        function resizeCanvas() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-        }
-
-        function drawParticles() {
-            if (!ctx) return;
-            ctx.clearRect(0, 0, width, height);
-            for (let p of particles) {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.fill();
-                p.x += p.speedX;
-                p.y += p.speedY;
-                if (p.x < -20) p.x = width + 20;
-                if (p.x > width + 20) p.x = -20;
-                if (p.y < -20) p.y = height + 20;
-                if (p.y > height + 20) p.y = -20;
-            }
-            requestAnimationFrame(drawParticles);
-        }
-
-        function setupParticles() {
-            resizeCanvas();
-            initParticles();
-            drawParticles();
-            window.addEventListener('resize', () => {
-                resizeCanvas();
-                particles = [];
-                initParticles();
-            });
-        }
-        setupParticles();
-
-        // 数据
+    (function () {
         const relationData = [
-            { name: "恋人", totalWords: 8475, myWords: 3759, theirWords: 4716, myRatio: 0.4435, avgDelaySec: 776.35 },
-            { name: "朋友", totalWords: 846, myWords: 147, theirWords: 699, myRatio: 0.1738, avgDelaySec: 12585 },
-            { name: "母女", totalWords: 775, myWords: 373, theirWords: 402, myRatio: 0.4813, avgDelaySec: 940 },
-            { name: "师生", totalWords: 631, myWords: 246, theirWords: 385, myRatio: 0.3899, avgDelaySec: 2201.54 },
-            { name: "兄妹", totalWords: 147, myWords: 99, theirWords: 48, myRatio: 0.6735, avgDelaySec: 3600 }
+            { name: "恋人", totalWords: 8475, myWords: 3759, theirWords: 4716, myRatio: 0.4435, avgDelaySec: 776.35, myDelaySec: 487.12, theirDelaySec: 440.12, totalMsgs: 444, peakHour: 22, peakLabel: "22:00-23:00", nightShare: 0.223, afternoonShare: 0.2072, weekdayBias: 1, earlyDelaySec: 399.27, recentDelaySec: 539.07 },
+            { name: "朋友", totalWords: 846, myWords: 147, theirWords: 699, myRatio: 0.1738, avgDelaySec: 12585, myDelaySec: 12585, theirDelaySec: 9990, totalMsgs: 12, peakHour: 13, peakLabel: "13:00-14:00", nightShare: 0, afternoonShare: 0.3333, weekdayBias: 1, earlyDelaySec: 11287.5, recentDelaySec: null },
+            { name: "母女", totalWords: 775, myWords: 373, theirWords: 402, myRatio: 0.4813, avgDelaySec: 940, myDelaySec: 6520, theirDelaySec: 2000, totalMsgs: 35, peakHour: 15, peakLabel: "15:00-16:00", nightShare: 0, afternoonShare: 0.4857, weekdayBias: 1, earlyDelaySec: 850, recentDelaySec: 1581.18 },
+            { name: "师生", totalWords: 631, myWords: 246, theirWords: 385, myRatio: 0.3899, avgDelaySec: 2201.54, myDelaySec: 1830, theirDelaySec: 5928.75, totalMsgs: 50, peakHour: 21, peakLabel: "21:00-22:00", nightShare: 0, afternoonShare: 0.08, weekdayBias: 1, earlyDelaySec: 1111.11, recentDelaySec: 1080 },
+            { name: "兄妹", totalWords: 147, myWords: 99, theirWords: 48, myRatio: 0.6735, avgDelaySec: 3600, myDelaySec: 20, theirDelaySec: 0, totalMsgs: 14, peakHour: 16, peakLabel: "16:00-17:00", nightShare: 0, afternoonShare: 0, weekdayBias: 1, earlyDelaySec: 0, recentDelaySec: 20 }
         ];
 
-        // 球体半径映射 (差距小一点)
-        const minWords = Math.min(...relationData.map(d => d.totalWords));
-        const maxWords = Math.max(...relationData.map(d => d.totalWords));
-        function getRadius(words) {
-            const minR = 16, maxR = 34;
-            if (maxWords === minWords) return 25;
-            return minR + (words - minWords) / (maxWords - minWords) * (maxR - minR);
-        }
+        const chartMeta = {
+            chart1: {
+                title: "消息总量对比",
+                sub: "横向比较不同关系在总字数上的能量占用。总量越高，说明这段关系消耗和占据的日常注意力越多。"
+            },
+            chart2: {
+                title: "对话天平",
+                sub: "我的字数占比与对方字数占比，直接反映谁在这段关系里更常解释、补充与承担表达。"
+            },
+            chart3: {
+                title: "心理阻力赛道",
+                sub: "把回复速度做成动态赛道。球越快，表示回得越快；球越大，表示这段关系的总能量越高。"
+            },
+            chart4: {
+                title: "表4：情感张力矩阵",
+                sub: "把总字数与平均延迟放进一个平面。你可以拖动阈值滑块，重新定义四象限的边界，观察关系如何迁移。"
+            },
+            chart5: {
+                title: "表5：回复熵与权力结构",
+                sub: "回复更慢、说得更少的一方往往握有节奏权。这里把字数比和双向回复延迟放到同一张权力表里。"
+            },
+            chart6: {
+                title: "表6：社交时差",
+                sub: "同一段关系，在不同时间窗里有完全不同的气氛。这里分别看活跃时段和关系趋势两个维度。"
+            }
+        };
 
-        // 速度映射：延迟越大速度越慢
-        const delays = relationData.map(d => d.avgDelaySec);
-        const maxDelay = Math.max(...delays);
-        const minDelay = Math.min(...delays);
-        function getSpeedPxPerFrame(delaySec) {
-            let speedVal = 1.0 / (delaySec / 80 + 0.015);
-            const maxRaw = 1.0 / (minDelay / 80 + 0.015);
-            const minRaw = 1.0 / (maxDelay / 80 + 0.015);
-            const norm = (speedVal - minRaw) / (maxRaw - minRaw);
-            let finalSpeed = 0.9 + norm * 2.6;
-            return Math.min(3.3, Math.max(0.9, finalSpeed));
-        }
+        const relationColor = {
+            "恋人": "#cf9f92",
+            "朋友": "#9cb2ce",
+            "母女": "#b2c7af",
+            "师生": "#b79ebc",
+            "兄妹": "#d3b596"
+        };
 
-        let trackAnimation = null;
+        const minWords = Math.min(...relationData.map(item => item.totalWords));
+        const maxWords = Math.max(...relationData.map(item => item.totalWords));
+        const maxDelay = Math.max(...relationData.map(item => item.avgDelaySec));
+        const avgWordsDefault = Math.round(relationData.reduce((sum, item) => sum + item.totalWords, 0) / relationData.length);
+        const avgDelayDefault = Math.round(relationData.reduce((sum, item) => sum + item.avgDelaySec, 0) / relationData.length);
+
         let currentChart = null;
+        let trackAnimation = null;
 
-        const homePage = document.getElementById('homePage');
-        const explorePage = document.getElementById('explorePage');
-        const detailPage = document.getElementById('detailPage');
-        const detailContent = document.getElementById('detailContent');
-        const startBtn = document.getElementById('startBtn');
-        const backToHomeBtn = document.getElementById('backToHomeBtn');
-        const backToCardsBtn = document.getElementById('backToCardsBtn');
+        const homePage = document.getElementById("homePage");
+        const explorePage = document.getElementById("explorePage");
+        const detailPage = document.getElementById("detailPage");
+        const detailContent = document.getElementById("detailContent");
+        const startBtn = document.getElementById("startBtn");
+        const backToHomeBtn = document.getElementById("backToHomeBtn");
+        const backToCardsBtn = document.getElementById("backToCardsBtn");
 
-        function showPage(pageName) {
+        function formatSeconds(value) {
+            if (value === null || value === undefined || Number.isNaN(value)) return "样本不足";
+            if (value < 60) return `${Math.round(value)} 秒`;
+            if (value < 3600) return `${(value / 60).toFixed(1)} 分钟`;
+            return `${(value / 3600).toFixed(1)} 小时`;
+        }
+
+        function formatRatio(value) {
+            return `${(value * 100).toFixed(1)}%`;
+        }
+
+        function getRadius(words) {
+            const minR = 18;
+            const maxR = 38;
+            if (maxWords === minWords) return 28;
+            return minR + ((words - minWords) / (maxWords - minWords)) * (maxR - minR);
+        }
+
+        function getSpeed(delaySec) {
+            const safe = Math.max(delaySec, 1);
+            const maxRaw = 1 / Math.sqrt(Math.max(Math.min(...relationData.map(item => item.avgDelaySec)), 1));
+            const minRaw = 1 / Math.sqrt(maxDelay);
+            const raw = 1 / Math.sqrt(safe);
+            const norm = (raw - minRaw) / (maxRaw - minRaw || 1);
+            return 1 + norm * 3;
+        }
+
+        function showPage(page) {
+            homePage.style.display = "none";
+            explorePage.style.display = "none";
+            detailPage.style.display = "none";
+
+            if (currentChart && currentChart.dispose) {
+                currentChart.dispose();
+                currentChart = null;
+            }
             if (trackAnimation) {
                 trackAnimation.stop();
                 trackAnimation = null;
             }
-            homePage.style.display = 'none';
-            explorePage.style.display = 'none';
-            detailPage.style.display = 'none';
-            if (pageName === 'home') homePage.style.display = 'flex';
-            if (pageName === 'explore') explorePage.style.display = 'block';
-            if (pageName === 'detail') detailPage.style.display = 'block';
+
+            if (page === "home") homePage.style.display = "flex";
+            if (page === "explore") explorePage.style.display = "block";
+            if (page === "detail") detailPage.style.display = "block";
         }
 
-        // 图表1
-        function renderChart1(containerId) {
-            const dom = document.getElementById(containerId);
-            if (!dom) return null;
-            const chart = echarts.init(dom);
-            chart.setOption({
-                tooltip: { trigger: 'axis', formatter: p => `<strong>${p[0].name}</strong><br/>📨 总字数: ${p[0].value} 字` },
-                grid: { left: '8%', right: '5%', top: '12%', bottom: '5%', containLabel: true },
-                xAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontWeight: 500, color: '#7a6a85' } },
-                yAxis: { type: 'value', name: '总字数 (字符)', nameTextStyle: { color: '#9a88a3' } },
+        function getQuadrant(item, wordThreshold, delayThreshold) {
+            const highWords = item.totalWords >= wordThreshold;
+            const fastReply = item.avgDelaySec <= delayThreshold;
+            if (highWords && fastReply) return "热情共鸣区";
+            if (!highWords && fastReply) return "事务高效区";
+            if (!highWords && !fastReply) return "社交疏离区";
+            return "深思熟虑区";
+        }
+
+        function getQuadrantClass(quadrant) {
+            if (quadrant === "热情共鸣区") return "warm";
+            if (quadrant === "事务高效区") return "fast";
+            if (quadrant === "社交疏离区") return "gray";
+            return "calm";
+        }
+
+        function getQuadrantInsight(item, quadrant) {
+            if (quadrant === "热情共鸣区") return `${item.name}消息量高且回复快，像一种高频率、高情绪密度的同步关系。`;
+            if (quadrant === "事务高效区") return `${item.name}回得快，但文本很短，更像确认、协作或轻量维系。`;
+            if (quadrant === "社交疏离区") return `${item.name}既回得慢也说得少，关系主要靠低频触达维持。`;
+            return `${item.name}虽然回复不快，但每次都愿意投入较长文本，更偏向有内容的慢交流。`;
+        }
+
+        function getPowerIndex(item) {
+            const delayAdv = item.theirDelaySec !== null && item.myDelaySec !== null ? (item.theirDelaySec - item.myDelaySec) / Math.max(item.theirDelaySec, item.myDelaySec, 1) : 0;
+            const wordAdv = 0.5 - item.myRatio;
+            return Math.round((delayAdv * 55 + wordAdv * 90) * 100) / 100;
+        }
+
+        function getPowerRole(item, score) {
+            if (item.myRatio > 0.6 && item.myDelaySec < item.theirDelaySec + 60) return "高投入者";
+            if (item.myRatio < 0.25 && item.totalWords > 700) return "倾听者";
+            if (score > 18) return "节奏主导者";
+            if (score < -18) return "情感劳动者";
+            return "相对均衡";
+        }
+
+        function getPowerInsight(item, score, role) {
+            if (role === "高投入者") return `${item.name}里你说得更多，而且没有明显拖慢节奏，说明你在主动维系关系。`;
+            if (role === "倾听者") return `${item.name}里总量不低，但你的字数占比很低，对方更像在向你倾诉。`;
+            if (role === "节奏主导者") return `${item.name}里你回复更慢或文本更克制，互动节奏更多由你掌握。`;
+            if (role === "情感劳动者") return `${item.name}里你回复更快、表达更多，情感劳动明显向你倾斜。`;
+            return `${item.name}在回复速度和字数分配上都比较接近，关系结构相对平衡。`;
+        }
+
+        function getRolePillClass(role) {
+            if (role === "情感劳动者" || role === "高投入者") return "alert";
+            if (role === "倾听者") return "calm";
+            if (role === "相对均衡") return "gray";
+            return "fast";
+        }
+
+        function getSceneTag(item) {
+            if (item.nightShare >= 0.18) return "深夜私密型";
+            if (item.afternoonShare >= 0.3) return "工作间隙型";
+            if (item.peakHour >= 20) return "夜间讨论型";
+            if (item.totalMsgs <= 16) return "定点触达型";
+            return "日常陪伴型";
+        }
+
+        function getTrendDelta(item) {
+            if (item.recentDelaySec === null || item.earlyDelaySec === null) return null;
+            return Math.round((item.recentDelaySec - item.earlyDelaySec) * 100) / 100;
+        }
+
+        function getTrendTag(item) {
+            const delta = getTrendDelta(item);
+            if (delta === null) return "样本不足";
+            if (delta > 240) return "降温";
+            if (delta < -120) return "升温";
+            return "稳定";
+        }
+
+        function getTrendInsight(item) {
+            const delta = getTrendDelta(item);
+            if (delta === null) return `${item.name}后半段样本不足，暂时不适合判断关系走势。`;
+            if (delta > 240) return `${item.name}近期平均回复延迟变长，关系热度有放缓迹象。`;
+            if (delta < -120) return `${item.name}近期回复延迟缩短，互动节奏比前期更顺畅。`;
+            return `${item.name}前后期的回复延迟变化不大，整体维持稳定。`;
+        }
+
+        function renderBaseShell(type, body) {
+            const meta = chartMeta[type];
+            detailContent.innerHTML = `
+                <div class="chart-container glass-card">
+                    <div class="chart-header">
+                        <div class="chart-title">${meta.title}</div>
+                        <div class="chart-sub">${meta.sub}</div>
+                    </div>
+                    ${body}
+                </div>
+            `;
+        }
+
+        function renderChart1() {
+            renderBaseShell("chart1", `<div id="dynamicChart" class="chart-box"></div><div class="footer-note">总字数是关系占据注意力的总和，并不直接等于亲密度，但非常接近“谁最常进入你的日常”。</div>`);
+            currentChart = echarts.init(document.getElementById("dynamicChart"));
+            currentChart.setOption({
+                grid: { left: "7%", right: "5%", top: "12%", bottom: "10%", containLabel: true },
+                tooltip: {
+                    trigger: "axis",
+                    formatter: params => {
+                        const item = relationData[params[0].dataIndex];
+                        return `<strong>${item.name}</strong><br>总字数：${item.totalWords}<br>消息条数：${item.totalMsgs}`;
+                    }
+                },
+                xAxis: {
+                    type: "category",
+                    data: relationData.map(item => item.name),
+                    axisLine: { lineStyle: { color: "#c9b8ad" } },
+                    axisLabel: { color: "#7f6a5d" }
+                },
+                yAxis: {
+                    type: "value",
+                    name: "总字数",
+                    nameTextStyle: { color: "#8e7c70" },
+                    splitLine: { lineStyle: { color: "rgba(214,200,190,0.5)" } }
+                },
                 series: [{
-                    type: 'bar', data: relationData.map(d => d.totalWords),
-                    itemStyle: { borderRadius: [10,10,0,0], color: '#c9b3c0', label: { show: true, position: 'top', fontWeight: 'bold', color: '#7a6392' } }
+                    type: "bar",
+                    barWidth: 46,
+                    data: relationData.map(item => ({
+                        value: item.totalWords,
+                        itemStyle: {
+                            color: relationColor[item.name],
+                            borderRadius: [14, 14, 0, 0]
+                        }
+                    })),
+                    label: {
+                        show: true,
+                        position: "top",
+                        color: "#6d5a52",
+                        fontWeight: 700
+                    }
                 }]
             });
-            return chart;
         }
 
-        // 图表2
-        function renderChart2(containerId) {
-            const dom = document.getElementById(containerId);
-            if (!dom) return null;
-            const chart = echarts.init(dom);
-            const myPercent = relationData.map(d => d.myRatio * 100);
-            const theirPercent = relationData.map(d => (1 - d.myRatio) * 100);
-            chart.setOption({
-                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(params) {
-                    const idx = params[0].dataIndex;
-                    const data = relationData[idx];
-                    return `<strong>${data.name}</strong><br/>📝 我: ${data.myWords} 字 (${(data.myRatio*100).toFixed(1)}%)<br/>👥 对方: ${data.theirWords} 字 (${((1-data.myRatio)*100).toFixed(1)}%)`;
-                } },
-                grid: { left: '12%', right: '8%', top: '12%', bottom: '8%', containLabel: true },
-                xAxis: { type: 'value', name: '字数占比 (%)', max: 100, axisLabel: { formatter: '{value}%' } },
-                yAxis: { type: 'category', data: relationData.map(d => d.name), axisLabel: { fontWeight: 500, color: '#7a6a85' } },
-                legend: { data: ['我 ', '对方 '], left: 'left', textStyle: { color: '#9b89a3' } },
+        function renderChart2() {
+            renderBaseShell("chart2", `
+                <div class="legend-inline">
+                    <span class="legend-item"><span class="legend-dot" style="background:#e7c2b9"></span>我的字数占比</span>
+                    <span class="legend-item"><span class="legend-dot" style="background:#b9c7dc"></span>对方字数占比</span>
+                </div>
+                <div id="dynamicChart" class="chart-box"></div>
+                <div class="footer-note">说得更多的人，往往在解释、推进、回应情绪或维持互动；说得更少的人，不一定冷淡，但通常更节制。</div>
+            `);
+            currentChart = echarts.init(document.getElementById("dynamicChart"));
+            currentChart.setOption({
+                grid: { left: "11%", right: "8%", top: "8%", bottom: "10%", containLabel: true },
+                tooltip: {
+                    trigger: "axis",
+                    axisPointer: { type: "shadow" },
+                    formatter: params => {
+                        const item = relationData[params[0].dataIndex];
+                        return `<strong>${item.name}</strong><br>我：${item.myWords} 字 (${formatRatio(item.myRatio)})<br>对方：${item.theirWords} 字 (${formatRatio(1 - item.myRatio)})`;
+                    }
+                },
+                xAxis: {
+                    type: "value",
+                    max: 100,
+                    axisLabel: { formatter: "{value}%", color: "#7f6a5d" },
+                    splitLine: { lineStyle: { color: "rgba(214,200,190,0.5)" } }
+                },
+                yAxis: {
+                    type: "category",
+                    data: relationData.map(item => item.name),
+                    axisLabel: { color: "#7f6a5d" }
+                },
                 series: [
-                    { name: '我 ', type: 'bar', stack: 'total', data: myPercent, itemStyle: { color: '#eed3da', borderRadius: [0, 6, 6, 0], label: { show: true, position: 'right', formatter: p => p.value.toFixed(1)+'%' } } },
-                    { name: '对方 ', type: 'bar', stack: 'total', data: theirPercent, itemStyle: { color: '#ced6df', borderRadius: [6, 0, 0, 6], label: { show: true, position: 'left', formatter: p => p.value.toFixed(1)+'%' } } }
+                    {
+                        name: "我",
+                        type: "bar",
+                        stack: "total",
+                        data: relationData.map(item => +(item.myRatio * 100).toFixed(1)),
+                        itemStyle: { color: "#e8c4bb", borderRadius: [0, 8, 8, 0] },
+                        label: { show: true, position: "insideLeft", formatter: "{c}%" }
+                    },
+                    {
+                        name: "对方",
+                        type: "bar",
+                        stack: "total",
+                        data: relationData.map(item => +((1 - item.myRatio) * 100).toFixed(1)),
+                        itemStyle: { color: "#b9c7dc", borderRadius: [8, 0, 0, 8] },
+                        label: { show: true, position: "insideRight", formatter: "{c}%" }
+                    }
                 ]
             });
-            return chart;
         }
 
-        // ========== 赛道往返动画 - 五条独立赛道，依次排开 ==========
         class TrackRacer {
             constructor(canvasId, data) {
                 this.canvas = document.getElementById(canvasId);
-                if (!this.canvas) return;
-                this.ctx = this.canvas.getContext('2d');
-                this.data = data;
+                this.ctx = this.canvas.getContext("2d");
+                this.data = data.map(item => ({
+                    ...item,
+                    radius: getRadius(item.totalWords),
+                    speed: getSpeed(item.avgDelaySec)
+                }));
                 this.tracks = [];
-                this.animationId = null;
-                this.init();
-            }
-            init() {
-                this.resize();
-                window.addEventListener('resize', () => this.resize());
+                this.frameId = null;
+                this.resizeHandler = () => this.resize();
                 this.buildTracks();
-                this.startAnimation();
+                this.resize();
+                window.addEventListener("resize", this.resizeHandler);
+                this.start();
             }
+
+            buildTracks() {
+                this.tracks = this.data.map((item, index) => ({
+                    ...item,
+                    lane: index,
+                    x: 140 + index * 40,
+                    dir: 1
+                }));
+            }
+
             resize() {
-                const container = this.canvas.parentElement;
-                if (!container) return;
-                const rect = container.getBoundingClientRect();
-                this.canvas.width = rect.width;
-                this.canvas.height = 540;
+                this.canvas.width = this.canvas.parentElement.clientWidth;
+                this.canvas.height = 520;
                 this.width = this.canvas.width;
                 this.height = this.canvas.height;
-                this.updateTrackPositions();
+                this.trackGap = (this.height - 100) / this.tracks.length;
                 this.draw();
             }
-            buildTracks() {
-                // 按原始顺序显示（恋人、朋友、母女、师生、兄妹），也可按延迟排序，但清晰排开即可
-                const order = [...this.data];
-                const palette = ['#c49c99', '#d1b7b8', '#c7c1cb', '#dbcbc2', '#e8ddd8'];
-                
-                this.tracks = order.map((item, idx) => {
-                    const radius = getRadius(item.totalWords);
-                    const speed = getSpeedPxPerFrame(item.avgDelaySec);
-                    return {
-                        name: item.name,
-                        delaySec: item.avgDelaySec,
-                        totalWords: item.totalWords,
-                        radius: radius,
-                        speed: speed,
-                        direction: 1,
-                        posX: 0,
-                        y: 0,
-                        startX: 70,
-                        endX: 0,
-                        trackHeight: 0,
-                        color: palette[idx % palette.length],
-                        labelColor: '#6d5c7c'
+
+            drawTrackLine(y, color) {
+                this.ctx.beginPath();
+                this.ctx.moveTo(88, y);
+                this.ctx.lineTo(this.width - 86, y);
+                this.ctx.strokeStyle = color;
+                this.ctx.lineWidth = 2;
+                this.ctx.setLineDash([8, 12]);
+                this.ctx.stroke();
+                this.ctx.setLineDash([]);
+            }
+
+            draw() {
+                this.ctx.clearRect(0, 0, this.width, this.height);
+                this.ctx.fillStyle = "rgba(255,250,246,0.98)";
+                this.ctx.fillRect(0, 0, this.width, this.height);
+
+                this.tracks.forEach((track, index) => {
+                    const y = 72 + index * this.trackGap;
+                    this.drawTrackLine(y, "rgba(217, 203, 193, 0.95)");
+
+                    this.ctx.fillStyle = "#7d675d";
+                    this.ctx.font = "600 15px Inter";
+                    this.ctx.fillText(track.name, 20, y + 5);
+
+                    this.ctx.fillStyle = "#a08f84";
+                    this.ctx.font = "12px Inter";
+                    this.ctx.fillText(formatSeconds(track.avgDelaySec), this.width - 78, y + 5);
+
+                    this.ctx.beginPath();
+                    this.ctx.arc(88, y, 6, 0, Math.PI * 2);
+                    this.ctx.arc(this.width - 86, y, 6, 0, Math.PI * 2);
+                    this.ctx.fillStyle = "rgba(225, 214, 206, 0.95)";
+                    this.ctx.fill();
+
+                    const grad = this.ctx.createRadialGradient(track.x - 6, y - 8, 5, track.x, y, track.radius);
+                    grad.addColorStop(0, "#ffffff");
+                    grad.addColorStop(1, relationColor[track.name]);
+                    this.ctx.shadowColor = "rgba(117, 95, 131, 0.18)";
+                    this.ctx.shadowBlur = 12;
+                    this.ctx.beginPath();
+                    this.ctx.arc(track.x, y, track.radius, 0, Math.PI * 2);
+                    this.ctx.fillStyle = grad;
+                    this.ctx.fill();
+                    this.ctx.shadowBlur = 0;
+
+                    this.ctx.fillStyle = "#fff9f2";
+                    this.ctx.font = `${Math.max(10, Math.min(13, track.radius / 2.8))}px Inter`;
+                    this.ctx.textAlign = "center";
+                    this.ctx.fillText(`${track.totalWords}`, track.x, y + 4);
+                    this.ctx.textAlign = "left";
+                });
+            }
+
+            step() {
+                this.tracks.forEach(track => {
+                    const minX = 112;
+                    const maxX = this.width - 114;
+                    track.x += track.speed * track.dir;
+                    if (track.x > maxX) {
+                        track.x = maxX - (track.x - maxX);
+                        track.dir = -1;
+                    }
+                    if (track.x < minX) {
+                        track.x = minX + (minX - track.x);
+                        track.dir = 1;
+                    }
+                });
+                this.draw();
+                this.frameId = requestAnimationFrame(() => this.step());
+            }
+
+            start() {
+                this.frameId = requestAnimationFrame(() => this.step());
+            }
+
+            stop() {
+                if (this.frameId) cancelAnimationFrame(this.frameId);
+                window.removeEventListener("resize", this.resizeHandler);
+            }
+        }
+
+        function renderChart3() {
+            renderBaseShell("chart3", `<div id="dynamicChart"><canvas id="trackCanvas" class="track-canvas"></canvas></div><div class="footer-note">快球代表低心理阻力，慢球代表高心理阻力；大球则表示这段关系在字数上更占据日常能量。</div>`);
+            trackAnimation = new TrackRacer("trackCanvas", relationData);
+        }
+
+        function createTableCellBar(value, max) {
+            const ratio = max ? Math.max(0, Math.min(100, (value / max) * 100)) : 0;
+            return `
+                <div>${value.toFixed ? value.toFixed(1) : value}</div>
+                <div class="metric-bar"><span style="width:${ratio}%;"></span></div>
+            `;
+        }
+
+        function renderChart4() {
+            renderBaseShell("chart4", `
+                <div class="controls-row">
+                    <div class="range-group">
+                        <label for="wordThreshold">高字数阈值</label>
+                        <input id="wordThreshold" type="range" min="100" max="9000" step="25" value="${avgWordsDefault}">
+                        <span class="range-value" id="wordThresholdValue">${avgWordsDefault}</span>
+                    </div>
+                    <div class="range-group">
+                        <label for="delayThreshold">快回复阈值</label>
+                        <input id="delayThreshold" type="range" min="60" max="14000" step="60" value="${avgDelayDefault}">
+                        <span class="range-value" id="delayThresholdValue">${formatSeconds(avgDelayDefault)}</span>
+                    </div>
+                    <div class="button-group" id="quadrantFilters"></div>
+                </div>
+                <div class="two-col">
+                    <div class="panel-card">
+                        <div id="dynamicChart" class="chart-box" style="height:460px;"></div>
+                    </div>
+                    <div class="panel-card">
+                        <div class="select-group" style="margin-bottom:12px;">
+                            <label for="matrixSort">排序方式</label>
+                            <select id="matrixSort" style="border:none;background:transparent;color:#6f5d53;font:inherit;outline:none;">
+                                <option value="words-desc">按总字数降序</option>
+                                <option value="delay-asc">按延迟升序</option>
+                                <option value="ratio-desc">按我的字数比降序</option>
+                            </select>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>关系</th>
+                                        <th>象限</th>
+                                        <th>总能量</th>
+                                        <th>平均延迟</th>
+                                        <th>我的字数比</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="matrixTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="insight-note" id="matrixInsight"></div>
+                    </div>
+                </div>
+            `);
+
+            const chartDom = document.getElementById("dynamicChart");
+            currentChart = echarts.init(chartDom);
+            const wordInput = document.getElementById("wordThreshold");
+            const delayInput = document.getElementById("delayThreshold");
+            const wordValue = document.getElementById("wordThresholdValue");
+            const delayValue = document.getElementById("delayThresholdValue");
+            const tableBody = document.getElementById("matrixTableBody");
+            const insight = document.getElementById("matrixInsight");
+            const sortSelect = document.getElementById("matrixSort");
+            const filterWrap = document.getElementById("quadrantFilters");
+
+            const filters = ["全部", "热情共鸣区", "事务高效区", "社交疏离区", "深思熟虑区"];
+            let activeFilter = "全部";
+            let activeName = relationData[0].name;
+
+            filterWrap.innerHTML = filters.map(filter => `<button class="chip-btn ${filter === "全部" ? "active" : ""}" data-filter="${filter}">${filter}</button>`).join("");
+
+            function update() {
+                const wordThreshold = Number(wordInput.value);
+                const delayThreshold = Number(delayInput.value);
+                wordValue.textContent = wordThreshold;
+                delayValue.textContent = formatSeconds(delayThreshold);
+
+                const enriched = relationData.map(item => {
+                    const quadrant = getQuadrant(item, wordThreshold, delayThreshold);
+                    return { ...item, quadrant, insight: getQuadrantInsight(item, quadrant) };
+                });
+
+                const filtered = enriched.filter(item => activeFilter === "全部" || item.quadrant === activeFilter);
+                const sorters = {
+                    "words-desc": (a, b) => b.totalWords - a.totalWords,
+                    "delay-asc": (a, b) => a.avgDelaySec - b.avgDelaySec,
+                    "ratio-desc": (a, b) => b.myRatio - a.myRatio
+                };
+                filtered.sort(sorters[sortSelect.value]);
+
+                currentChart.setOption({
+                    grid: { left: "10%", right: "8%", top: "9%", bottom: "10%" },
+                    tooltip: {
+                        formatter: params => {
+                            const item = enriched.find(entry => entry.name === params.data.name);
+                            return `<strong>${item.name}</strong><br>${item.quadrant}<br>总字数：${item.totalWords}<br>平均延迟：${formatSeconds(item.avgDelaySec)}<br>我的字数比：${formatRatio(item.myRatio)}`;
+                        }
+                    },
+                    xAxis: {
+                        type: "value",
+                        name: "总字数 / 总能量",
+                        min: 0,
+                        max: maxWords + 800,
+                        splitLine: { lineStyle: { color: "rgba(214,200,190,0.5)" } },
+                        axisLabel: { color: "#7f6a5d" },
+                        nameTextStyle: { color: "#8e7c70" }
+                    },
+                    yAxis: {
+                        type: "value",
+                        name: "平均回复延迟（秒）",
+                        min: 0,
+                        max: maxDelay + 1000,
+                        splitLine: { lineStyle: { color: "rgba(214,200,190,0.5)" } },
+                        axisLabel: { color: "#7f6a5d" },
+                        nameTextStyle: { color: "#8e7c70" }
+                    },
+                    series: [{
+                        type: "scatter",
+                        symbolSize: params => Math.max(22, Math.sqrt(params[2]) / 2.1),
+                        data: enriched.map(item => ({
+                            name: item.name,
+                            value: [item.totalWords, item.avgDelaySec, item.totalWords, item.myRatio]
+                        })),
+                        itemStyle: {
+                            color: params => relationColor[params.data.name],
+                            opacity: 0.9
+                        },
+                        label: {
+                            show: true,
+                            formatter: params => params.data.name,
+                            position: "top",
+                            color: "#5e524a"
+                        },
+                        markLine: {
+                            symbol: "none",
+                            silent: true,
+                            lineStyle: { type: "dashed", color: "#b3978d" },
+                            data: [
+                                { xAxis: wordThreshold },
+                                { yAxis: delayThreshold }
+                            ]
+                        }
+                    }]
+                });
+
+                tableBody.innerHTML = filtered.map(item => `
+                    <tr data-name="${item.name}" class="${item.name === activeName ? "active" : ""}">
+                        <td>${item.name}</td>
+                        <td><span class="pill ${getQuadrantClass(item.quadrant)}">${item.quadrant}</span></td>
+                        <td>${createTableCellBar(item.totalWords, maxWords)}</td>
+                        <td>${formatSeconds(item.avgDelaySec)}</td>
+                        <td>${formatRatio(item.myRatio)}</td>
+                    </tr>
+                `).join("");
+
+                const current = enriched.find(item => item.name === activeName) || filtered[0] || enriched[0];
+                activeName = current.name;
+                insight.innerHTML = `<strong>${current.name}</strong> · ${current.quadrant}<br>${current.insight}`;
+
+                tableBody.querySelectorAll("tr").forEach(row => {
+                    row.onclick = () => {
+                        activeName = row.dataset.name;
+                        update();
+                        currentChart.dispatchAction({ type: "highlight", seriesIndex: 0, name: activeName });
                     };
                 });
             }
-            updateTrackPositions() {
-                const trackCount = this.tracks.length;
-                const topMargin = 55;
-                const bottomMargin = 45;
-                const availableHeight = this.height - topMargin - bottomMargin;
-                const trackHeight = availableHeight / trackCount;
-                
-                for (let i = 0; i < this.tracks.length; i++) {
-                    const t = this.tracks[i];
-                    const centerY = topMargin + i * trackHeight + trackHeight / 2;
-                    t.y = centerY;
-                    t.trackHeight = trackHeight * 0.6;
-                    t.startX = 70;
-                    t.endX = this.width - 70;
-                    const range = t.endX - t.startX;
-                    t.range = range;
-                    
-                    if (t.posX === 0 || isNaN(t.posX)) {
-                        t.posX = t.startX + range * 0.3;
-                    }
-                    if (t.posX < t.startX) t.posX = t.startX;
-                    if (t.posX > t.endX) t.posX = t.endX;
-                }
-            }
-            draw() {
-                if (!this.ctx || !this.width) return;
-                this.ctx.clearRect(0, 0, this.width, this.height);
-                this.ctx.fillStyle = '#fefaf5';
-                this.ctx.fillRect(0, 0, this.width, this.height);
-                
-                for (let t of this.tracks) {
-                    const lineY = t.y;
-                    // 赛道虚线
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(t.startX, lineY);
-                    this.ctx.lineTo(t.endX, lineY);
-                    this.ctx.strokeStyle = '#d9cdc0';
-                    this.ctx.lineWidth = 2.5;
-                    this.ctx.setLineDash([8, 12]);
-                    this.ctx.stroke();
-                    this.ctx.setLineDash([]);
-                    
-                    // 起点/终点装饰
-                    this.ctx.beginPath();
-                    this.ctx.arc(t.startX, lineY, 7, 0, 2 * Math.PI);
-                    this.ctx.fillStyle = '#e7dbcf';
-                    this.ctx.fill();
-                    this.ctx.beginPath();
-                    this.ctx.arc(t.endX, lineY, 7, 0, 2 * Math.PI);
-                    this.ctx.fill();
-                    
-                    // 关系名称标签
-                    this.ctx.font = `600 14px "Inter"`;
-                    this.ctx.fillStyle = t.labelColor;
-                    this.ctx.fillText(t.name, 12, lineY + 5);
-                    
-                    // 右侧延迟信息
-                    const delayText = t.delaySec > 3600 ? `${(t.delaySec/3600).toFixed(1)}h` : `${t.delaySec.toFixed(0)}s`;
-                    this.ctx.font = `11px monospace`;
-                    this.ctx.fillStyle = '#aa9bae';
-                    this.ctx.fillText(`回复延迟 ${delayText}`, this.width - 95, lineY + 5);
-                    
-                    // 小球
-                    const x = t.posX;
-                    const radius = t.radius;
-                    const grad = this.ctx.createRadialGradient(x-4, lineY-4, 3, x, lineY, radius);
-                    grad.addColorStop(0, t.color);
-                    grad.addColorStop(1, this.darkenColor(t.color));
-                    this.ctx.shadowColor = 'rgba(0,0,0,0.1)';
-                    this.ctx.shadowBlur = 6;
-                    this.ctx.beginPath();
-                    this.ctx.arc(x, lineY, radius, 0, 2 * Math.PI);
-                    this.ctx.fillStyle = grad;
-                    this.ctx.fill();
-                    this.ctx.strokeStyle = '#fff6ed';
-                    this.ctx.lineWidth = 1.5;
-                    this.ctx.stroke();
-                    this.ctx.shadowBlur = 0;
-                    
-                    // 小球内显示字数
-                    this.ctx.font = `${Math.max(9, Math.min(12, radius/3.2))}px "Inter"`;
-                    this.ctx.fillStyle = '#fef7e8';
-                    this.ctx.fillText(`${t.totalWords}`, x-4, lineY+4);
-                }
-            }
-            darkenColor(color) {
-                return color;
-            }
-            updatePositions() {
-                for (let t of this.tracks) {
-                    let newX = t.posX + t.speed * t.direction;
-                    if (newX >= t.endX) {
-                        newX = t.endX - (newX - t.endX);
-                        t.direction = -1;
-                    }
-                    if (newX <= t.startX) {
-                        newX = t.startX + (t.startX - newX);
-                        t.direction = 1;
-                    }
-                    t.posX = Math.min(t.endX, Math.max(t.startX, newX));
-                }
-            }
-            animate() {
-                this.updatePositions();
-                this.draw();
-            }
-            startAnimation() {
-                const step = () => {
-                    this.animate();
-                    this.animationId = requestAnimationFrame(step);
+
+            filterWrap.querySelectorAll(".chip-btn").forEach(btn => {
+                btn.onclick = () => {
+                    filterWrap.querySelectorAll(".chip-btn").forEach(node => node.classList.remove("active"));
+                    btn.classList.add("active");
+                    activeFilter = btn.dataset.filter;
+                    update();
                 };
-                this.animationId = requestAnimationFrame(step);
-            }
-            stop() {
-                if (this.animationId) {
-                    cancelAnimationFrame(this.animationId);
-                    this.animationId = null;
-                }
-            }
-        }
-
-        function renderChart3(containerId) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            container.innerHTML = `<canvas id="trackCanvas" class="track-canvas" style="width:100%; height:540px; display:block;"></canvas>`;
-            trackAnimation = new TrackRacer('trackCanvas', relationData);
-        }
-
-        function renderDetailChart(chartType) {
-            detailContent.innerHTML = `
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <div class="chart-title">${chartType === 'chart1' ? '📊 消息总量对比' : chartType === 'chart2' ? '⚖️ 对话天平' : '🏁 心理阻力 · 赛道往返'}</div>
-                        <div class="chart-sub">${chartType === 'chart1' ? '横向权力对比，社交能量分布' : chartType === 'chart2' ? '横向占比：我 vs 对方' : '小球速度 = 回复速度，体积 = 对话数量'}</div>
-                    </div>
-                    <div id="dynamicChart" class="chart-box"></div>
-                </div>
-            `;
-            setTimeout(() => {
-                if (currentChart && currentChart.dispose) currentChart.dispose();
-                if (chartType === 'chart1') currentChart = renderChart1('dynamicChart');
-                else if (chartType === 'chart2') currentChart = renderChart2('dynamicChart');
-                else if (chartType === 'chart3') renderChart3('dynamicChart');
-                window.dispatchEvent(new Event('resize'));
-            }, 80);
-        }
-
-        if (startBtn) startBtn.onclick = () => showPage('explore');
-        if (backToHomeBtn) backToHomeBtn.onclick = () => showPage('home');
-        if (backToCardsBtn) backToCardsBtn.onclick = () => showPage('explore');
-        document.querySelectorAll('.insight-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const type = card.getAttribute('data-chart');
-                renderDetailChart(type);
-                showPage('detail');
             });
+
+            wordInput.oninput = update;
+            delayInput.oninput = update;
+            sortSelect.onchange = update;
+
+            currentChart.on("click", params => {
+                activeName = params.data.name;
+                update();
+            });
+
+            update();
+        }
+
+        function renderChart5() {
+            renderBaseShell("chart5", `
+                <div class="controls-row">
+                    <div class="button-group" id="powerModeGroup">
+                        <button class="toggle-btn active" data-mode="raw">原始值</button>
+                        <button class="toggle-btn" data-mode="norm">标准化视图</button>
+                    </div>
+                    <div class="button-group" id="powerFilterGroup">
+                        <button class="chip-btn active" data-role="全部">全部</button>
+                        <button class="chip-btn" data-role="我投入更多">我投入更多</button>
+                        <button class="chip-btn" data-role="对方向我倾诉">对方向我倾诉</button>
+                        <button class="chip-btn" data-role="相对均衡">相对均衡</button>
+                    </div>
+                </div>
+                <div class="two-col">
+                    <div class="panel-card">
+                        <div id="dynamicChart" class="chart-box" style="height:460px;"></div>
+                    </div>
+                    <div class="panel-card">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>关系</th>
+                                        <th>角色</th>
+                                        <th>权力指数</th>
+                                        <th>我的占比</th>
+                                        <th>双向延迟</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="powerTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="insight-note" id="powerInsight"></div>
+                    </div>
+                </div>
+            `);
+
+            const chartDom = document.getElementById("dynamicChart");
+            currentChart = echarts.init(chartDom);
+            const modeGroup = document.getElementById("powerModeGroup");
+            const filterGroup = document.getElementById("powerFilterGroup");
+            const tableBody = document.getElementById("powerTableBody");
+            const insight = document.getElementById("powerInsight");
+
+            let mode = "raw";
+            let roleFilter = "全部";
+            let activeName = relationData[0].name;
+
+            function classifyFilter(item, role) {
+                if (roleFilter === "全部") return true;
+                if (roleFilter === "我投入更多") return role === "高投入者" || role === "情感劳动者";
+                if (roleFilter === "对方向我倾诉") return role === "倾听者";
+                return role === "相对均衡";
+            }
+
+            function update() {
+                const enriched = relationData.map(item => {
+                    const powerIndex = getPowerIndex(item);
+                    const role = getPowerRole(item, powerIndex);
+                    const normalizedIndex = Math.round((powerIndex / 70) * 100);
+                    return { ...item, powerIndex, normalizedIndex, role, insight: getPowerInsight(item, powerIndex, role) };
+                }).filter(item => classifyFilter(item, item.role));
+
+                enriched.sort((a, b) => (mode === "raw" ? b.powerIndex - a.powerIndex : b.normalizedIndex - a.normalizedIndex));
+
+                currentChart.setOption({
+                    grid: { left: "12%", right: "8%", top: "8%", bottom: "10%", containLabel: true },
+                    xAxis: {
+                        type: "value",
+                        min: mode === "raw" ? -50 : -100,
+                        max: mode === "raw" ? 50 : 100,
+                        axisLabel: {
+                            color: "#7f6a5d",
+                            formatter: value => mode === "raw" ? value : `${value}`
+                        },
+                        splitLine: { lineStyle: { color: "rgba(214,200,190,0.5)" } }
+                    },
+                    yAxis: {
+                        type: "category",
+                        data: enriched.map(item => item.name),
+                        axisLabel: { color: "#7f6a5d" }
+                    },
+                    tooltip: {
+                        formatter: params => {
+                            const item = enriched[params.dataIndex];
+                            return `<strong>${item.name}</strong><br>角色：${item.role}<br>权力指数：${item.powerIndex}<br>我回复：${formatSeconds(item.myDelaySec)}<br>对方回复：${formatSeconds(item.theirDelaySec)}`;
+                        }
+                    },
+                    series: [{
+                        type: "bar",
+                        data: enriched.map(item => ({
+                            value: mode === "raw" ? item.powerIndex : item.normalizedIndex,
+                            itemStyle: {
+                                color: item.powerIndex >= 0 ? "#93ad9a" : "#c88e8e",
+                                borderRadius: [8, 8, 8, 8]
+                            }
+                        })),
+                        label: {
+                            show: true,
+                            position: "right",
+                            formatter: params => params.value
+                        }
+                    }]
+                });
+
+                tableBody.innerHTML = enriched.map(item => `
+                    <tr data-name="${item.name}" class="${item.name === activeName ? "active" : ""}">
+                        <td>${item.name}</td>
+                        <td><span class="pill ${getRolePillClass(item.role)}">${item.role}</span></td>
+                        <td>${mode === "raw" ? item.powerIndex.toFixed(2) : item.normalizedIndex}</td>
+                        <td>${formatRatio(item.myRatio)}</td>
+                        <td>我 ${formatSeconds(item.myDelaySec)}<br>对方 ${formatSeconds(item.theirDelaySec)}</td>
+                    </tr>
+                `).join("");
+
+                const current = enriched.find(item => item.name === activeName) || enriched[0];
+                if (current) {
+                    activeName = current.name;
+                    insight.innerHTML = `<strong>${current.name}</strong> · ${current.role}<br>${current.insight}`;
+                } else {
+                    insight.innerHTML = "当前筛选下没有匹配关系。";
+                }
+
+                tableBody.querySelectorAll("tr").forEach(row => {
+                    row.onclick = () => {
+                        activeName = row.dataset.name;
+                        update();
+                    };
+                });
+            }
+
+            modeGroup.querySelectorAll(".toggle-btn").forEach(btn => {
+                btn.onclick = () => {
+                    modeGroup.querySelectorAll(".toggle-btn").forEach(node => node.classList.remove("active"));
+                    btn.classList.add("active");
+                    mode = btn.dataset.mode;
+                    update();
+                };
+            });
+
+            filterGroup.querySelectorAll(".chip-btn").forEach(btn => {
+                btn.onclick = () => {
+                    filterGroup.querySelectorAll(".chip-btn").forEach(node => node.classList.remove("active"));
+                    btn.classList.add("active");
+                    roleFilter = btn.dataset.role;
+                    update();
+                };
+            });
+
+            update();
+        }
+
+        function renderChart6() {
+            renderBaseShell("chart6", `
+                <div class="controls-row">
+                    <div class="button-group" id="timeTabGroup">
+                        <button class="tab-btn active" data-tab="window">活跃时间窗</button>
+                        <button class="tab-btn" data-tab="trend">关系变化趋势</button>
+                    </div>
+                </div>
+                <div class="two-col">
+                    <div class="panel-card">
+                        <div id="dynamicChart" class="chart-box" style="height:460px;"></div>
+                    </div>
+                    <div class="panel-card">
+                        <div class="table-wrap">
+                            <table>
+                                <thead id="timeTableHead"></thead>
+                                <tbody id="timeTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="insight-note" id="timeInsight"></div>
+                    </div>
+                </div>
+            `);
+
+            const chartDom = document.getElementById("dynamicChart");
+            currentChart = echarts.init(chartDom);
+            const tabGroup = document.getElementById("timeTabGroup");
+            const tableHead = document.getElementById("timeTableHead");
+            const tableBody = document.getElementById("timeTableBody");
+            const insight = document.getElementById("timeInsight");
+            let tab = "window";
+            let activeName = relationData[0].name;
+
+            function update() {
+                if (tab === "window") {
+                    const data = [...relationData].sort((a, b) => b.nightShare - a.nightShare || b.afternoonShare - a.afternoonShare);
+                    tableHead.innerHTML = `
+                        <tr>
+                            <th>关系</th>
+                            <th>最活跃时段</th>
+                            <th>深夜占比</th>
+                            <th>午后占比</th>
+                            <th>场景标签</th>
+                        </tr>
+                    `;
+                    tableBody.innerHTML = data.map(item => `
+                        <tr data-name="${item.name}" class="${item.name === activeName ? "active" : ""}">
+                            <td>${item.name}</td>
+                            <td>${item.peakLabel}</td>
+                            <td>${formatRatio(item.nightShare)}</td>
+                            <td>${formatRatio(item.afternoonShare)}</td>
+                            <td><span class="pill ${item.nightShare > 0 ? "warm" : item.afternoonShare > 0.25 ? "fast" : "gray"}">${getSceneTag(item)}</span></td>
+                        </tr>
+                    `).join("");
+
+                    currentChart.setOption({
+                        legend: {
+                            top: 0,
+                            textStyle: { color: "#7f6a5d" }
+                        },
+                        grid: { left: "10%", right: "8%", top: "16%", bottom: "10%", containLabel: true },
+                        tooltip: {
+                            trigger: "axis",
+                            axisPointer: { type: "shadow" },
+                            formatter: params => {
+                                const item = data[params[0].dataIndex];
+                                return `<strong>${item.name}</strong><br>最活跃：${item.peakLabel}<br>深夜占比：${formatRatio(item.nightShare)}<br>午后占比：${formatRatio(item.afternoonShare)}`;
+                            }
+                        },
+                        xAxis: {
+                            type: "value",
+                            max: 60,
+                            axisLabel: { formatter: "{value}%", color: "#7f6a5d" },
+                            splitLine: { lineStyle: { color: "rgba(214,200,190,0.5)" } }
+                        },
+                        yAxis: {
+                            type: "category",
+                            data: data.map(item => item.name),
+                            axisLabel: { color: "#7f6a5d" }
+                        },
+                        series: [
+                            {
+                                name: "深夜占比",
+                                type: "bar",
+                                data: data.map(item => +(item.nightShare * 100).toFixed(1)),
+                                itemStyle: { color: "#d0a199", borderRadius: [0, 8, 8, 0] }
+                            },
+                            {
+                                name: "午后占比",
+                                type: "bar",
+                                data: data.map(item => +(item.afternoonShare * 100).toFixed(1)),
+                                itemStyle: { color: "#9db0d1", borderRadius: [0, 8, 8, 0] }
+                            }
+                        ]
+                    });
+
+                    const current = data.find(item => item.name === activeName) || data[0];
+                    activeName = current.name;
+                    insight.innerHTML = `<strong>${current.name}</strong> · ${getSceneTag(current)}<br>这段关系最活跃的时段是 ${current.peakLabel}，其中深夜消息占比为 ${formatRatio(current.nightShare)}，午后消息占比为 ${formatRatio(current.afternoonShare)}。`;
+                } else {
+                    const data = [...relationData].sort((a, b) => {
+                        const deltaA = getTrendDelta(a);
+                        const deltaB = getTrendDelta(b);
+                        return (deltaB ?? -999999) - (deltaA ?? -999999);
+                    });
+                    tableHead.innerHTML = `
+                        <tr>
+                            <th>关系</th>
+                            <th>前期延迟</th>
+                            <th>近期延迟</th>
+                            <th>变化量</th>
+                            <th>状态</th>
+                        </tr>
+                    `;
+                    tableBody.innerHTML = data.map(item => {
+                        const delta = getTrendDelta(item);
+                        const status = getTrendTag(item);
+                        return `
+                            <tr data-name="${item.name}" class="${item.name === activeName ? "active" : ""}">
+                                <td>${item.name}</td>
+                                <td>${formatSeconds(item.earlyDelaySec)}</td>
+                                <td>${formatSeconds(item.recentDelaySec)}</td>
+                                <td>${delta === null ? "样本不足" : formatSeconds(Math.abs(delta))}</td>
+                                <td><span class="pill ${status === "降温" ? "alert" : status === "升温" ? "fast" : "gray"}">${status}</span></td>
+                            </tr>
+                        `;
+                    }).join("");
+
+                    currentChart.setOption({
+                        grid: { left: "10%", right: "8%", top: "10%", bottom: "10%", containLabel: true },
+                        tooltip: {
+                            formatter: params => {
+                                const item = data[params.dataIndex];
+                                const delta = getTrendDelta(item);
+                                return `<strong>${item.name}</strong><br>前期延迟：${formatSeconds(item.earlyDelaySec)}<br>近期延迟：${formatSeconds(item.recentDelaySec)}<br>变化：${delta === null ? "样本不足" : (delta > 0 ? "变慢" : "变快")}`;
+                            }
+                        },
+                        xAxis: {
+                            type: "value",
+                            min: -1000,
+                            max: 15000,
+                            axisLabel: { color: "#7f6a5d" },
+                            splitLine: { lineStyle: { color: "rgba(214,200,190,0.5)" } }
+                        },
+                        yAxis: {
+                            type: "category",
+                            data: data.map(item => item.name),
+                            axisLabel: { color: "#7f6a5d" }
+                        },
+                        series: [
+                            {
+                                name: "前期延迟",
+                                type: "bar",
+                                data: data.map(item => item.earlyDelaySec ?? 0),
+                                itemStyle: { color: "#d8c2b7", borderRadius: [0, 8, 8, 0] }
+                            },
+                            {
+                                name: "近期延迟",
+                                type: "bar",
+                                data: data.map(item => item.recentDelaySec ?? 0),
+                                itemStyle: { color: "#9db0d1", borderRadius: [0, 8, 8, 0] }
+                            }
+                        ]
+                    });
+
+                    const current = data.find(item => item.name === activeName) || data[0];
+                    activeName = current.name;
+                    insight.innerHTML = `<strong>${current.name}</strong> · ${getTrendTag(current)}<br>${getTrendInsight(current)}`;
+                }
+
+                tableBody.querySelectorAll("tr").forEach(row => {
+                    row.onclick = () => {
+                        activeName = row.dataset.name;
+                        update();
+                    };
+                });
+            }
+
+            tabGroup.querySelectorAll(".tab-btn").forEach(btn => {
+                btn.onclick = () => {
+                    tabGroup.querySelectorAll(".tab-btn").forEach(node => node.classList.remove("active"));
+                    btn.classList.add("active");
+                    tab = btn.dataset.tab;
+                    update();
+                };
+            });
+
+            update();
+        }
+
+        function renderDetailChart(type) {
+            showPage("detail");
+            if (type === "chart1") renderChart1();
+            if (type === "chart2") renderChart2();
+            if (type === "chart3") renderChart3();
+            if (type === "chart4") renderChart4();
+            if (type === "chart5") renderChart5();
+            if (type === "chart6") renderChart6();
+            setTimeout(() => window.dispatchEvent(new Event("resize")), 80);
+        }
+
+        function setupParticles() {
+            const canvas = document.getElementById("particles-canvas");
+            const ctx = canvas.getContext("2d");
+            let width = 0;
+            let height = 0;
+            let particles = [];
+
+            function resize() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+                particles = Array.from({ length: 58 }, () => ({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    r: Math.random() * 3 + 1.4,
+                    vx: (Math.random() - 0.5) * 0.28,
+                    vy: (Math.random() - 0.5) * 0.16,
+                    color: ["rgba(184,138,122,0.26)", "rgba(154,167,200,0.24)", "rgba(183,158,188,0.22)"][Math.floor(Math.random() * 3)]
+                }));
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < -20) p.x = width + 20;
+                    if (p.x > width + 20) p.x = -20;
+                    if (p.y < -20) p.y = height + 20;
+                    if (p.y > height + 20) p.y = -20;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                });
+                requestAnimationFrame(draw);
+            }
+
+            resize();
+            draw();
+            window.addEventListener("resize", resize);
+        }
+
+        document.querySelectorAll(".insight-card").forEach(card => {
+            card.addEventListener("click", () => renderDetailChart(card.dataset.chart));
         });
-        showPage('home');
+
+        window.addEventListener("resize", () => {
+            if (currentChart && currentChart.resize) currentChart.resize();
+        });
+
+        startBtn.onclick = () => showPage("explore");
+        backToHomeBtn.onclick = () => showPage("home");
+        backToCardsBtn.onclick = () => showPage("explore");
+
+        setupParticles();
+        showPage("home");
     })();
 </script>
 </body>
